@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const addReview = (id, params) => axios.post(`http://52.26.193.201:3000/reviews/${id}`, {
+const addReview = (id, params) => axios.post(`http://localhost:9003/reviews/${id}`, {
   rating: params.rating,
   summary: params.title,
   body: params.review,
