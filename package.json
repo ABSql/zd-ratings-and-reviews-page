@@ -43,6 +43,7 @@
     "jest": "^26.4.2",
     "material-ui-dropzone": "^3.5.0",
     "mini-css-extract-plugin": "^1.0.0",
+    "mongoose": "^5.10.9",
     "nodemon": "^2.0.4",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "react": "^16.13.1",

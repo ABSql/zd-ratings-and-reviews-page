@@ -1,6 +1,15 @@
 const express = require('express');
 
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/reviews', {useNewUrlParser: true});
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('database connected')
+});
+
 
 const app = express();
 const PORT = 9003;
@@ -12,13 +21,13 @@ app.use(express.static('../client/dist'));
 
 // Requests here
 app.get('/reviews/:product_id/list', (req, res) => {
-  const reviewList = controllers.getReviewsList(request.params.product_id)
-  reply.send(reviewList)
+  const reviewList = controllers.getReviewsList(req.params.product_id)
+  res.send(reviewList)
 })
 
 app.get('/reviews/:product_id/meta', (req, res) => {
-  const metaData = controllers.getReviewsMeta(request.params.product_id)
-  reply.send(metaData)
+  const metaData = controllers.getReviewsMeta(req.params.product_id)
+  res.send(metaData)
 })
 
 app.post('/reviews/:product_id', (req, res) => {
