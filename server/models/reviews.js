@@ -13,3 +13,5 @@ const reviewSchema = newSchema({
   helpfulness: Number,
   report: Boolean,
 })
+
+const Review = mongoose.model('Review', reviewSchema)

@@ -1,17 +1,39 @@
-import mongoose from 'mongoose';
-const { Schema } = mongoose;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema
+const char = require('./characteristic.js')
 
 const productSchema = new Schema({
-  _id: Schema.Types.Objectid,
-  reviews: [{ type: Schema.Types.Objectid, ref: 'Review' }],
-  characteristics: [{ type: Schema.Types.Objectid, ref: 'Characteristic' }],
+  reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+  characteristics: [{ type: Schema.Types.ObjectId, ref: 'Characteristic' }],
 })
 
 const Product = mongoose.model('Product', productSchema)
 
-const createNewProduct = () => {
-  const prod = new Product()
+const createNewProduct = (chars) => {
+  const prod = new Product({
+    reviews: [],
+    characteristics: [],
+  })
+
+  prod.save( async (err) => {
+    if (err) return err
+
+    // wait for query to return then loop through and create chars for products
+    const prodQuery = await Product.findOne({_id: prod._id})
+    chars.forEach((value, index) => {
+      char.createCharacteristic(value, prodQuery)
+    })
+    // awaiting createcharacteristic to complete then run populate
+    prodQuery.populate('characteristics')
+    .exec((err, characteristics) => {
+      if (err) return err
+      console.log('Populated characteristics, ', characteristics)
+    })
+  })
+
 }
 
-
+module.exports = {
+  createNewProduct,
+}
 

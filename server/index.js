@@ -1,6 +1,6 @@
 const express = require('express');
-
 const bodyParser = require('body-parser');
+
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/reviews', {useNewUrlParser: true});
 
@@ -8,7 +8,10 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('database connected')
+  const product = require('./database/product.js')
+  product.createNewProduct(['Fit', 'Length'])
 });
+
 
 
 const app = express();

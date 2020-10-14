@@ -6,3 +6,5 @@ const photoSchema = newSchema({
   _id: Schema.Types.Objectid,
   url: String,
 })
+
+const Photo = mongoose.model('Photo', photoSchema)
