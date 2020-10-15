@@ -16,8 +16,8 @@ const markHelpful = (id) => {
   return reviews.markHelpful(id)
 }
 
-const reportReview = () => {
-
+const reportReview = (id) => {
+  return reviews.reportReview(id)
 }
 
 const removeReview = () => {

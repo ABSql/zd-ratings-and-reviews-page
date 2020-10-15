@@ -35,7 +35,18 @@ const markHelpful = (id) => {
 
 }
 
+const reportReview = (id) => {
+  return product.Product.findOne({'reviews._id': id}, (err, prod) => {
+    // select review with input id and increment helpfullness by 1
+    prod.reviews.id(id).report = true
+    prod.save((err) => {
+      if (err) throw err
+    })
+  })
+}
+
 module.exports = {
   createReview,
   markHelpful,
+  reportReview,
 }

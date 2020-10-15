@@ -55,9 +55,15 @@ app.put('/reviews/helpful/:review_id', async (req, res) => {
   }
 })
 
-app.put('/reviews/report/:review_id', (req, res) => {
-  const reportedReview = req.body
-  controller.reportReview(reportedReview)
+app.put('/reviews/report/:review_id', async (req, res) => {
+  const reportedReview = req.params.review_id
+  try {
+    console.log( await reviews.reportReview(reportedReview) )
+    res.sendStatus(201)
+  } catch(err) {
+    console.log(err)
+    res.sendStatus(500)
+  }
 })
 
 app.delete('/reviews/:review_id', (req, res) => {
