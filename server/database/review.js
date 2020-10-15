@@ -29,7 +29,7 @@ const createReview = (data) => {
   report: false,
   })
 
-  const val = newReview.save( async (err) => {
+   newReview.save( async (err) => {
     if (err) throw err
     // wait for query to return then loop through and create chars for products
     const reviewQuery = await Review.findOne({_id: newReview._id})
@@ -37,7 +37,6 @@ const createReview = (data) => {
       photos.createPhoto(value, reviewQuery)
     })
   })
-  return val
 }
 
 

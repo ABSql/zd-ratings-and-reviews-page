@@ -8,8 +8,9 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('database connected')
+  const a = require('./database/bigcollection.js')
+  a.createProduct(['Fit', 'Length'])
 });
-
 
 
 const app = express();
