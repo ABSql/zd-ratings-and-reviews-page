@@ -23,9 +23,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('../client/dist'));
 
 // Requests here
-app.get('/reviews/:product_id/list', (req, res) => {
-  const reviewList = controllers.getReviewsList(req.params.product_id)
-  res.send(reviewList)
+app.get('/reviews/:product_id/list', async (req, res) => {
+  const count = req.query.count ? req.query.count : 5
+  const page = req.query.page ? req.query.page : 1
+  const sort = req.query.sort ? req.query.sort : 'newest'
+  try {
+    const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)
+    console.log('reviews: ', reviewList)
+    res.status(201).send(reviewList)
+  } catch(err) {
+    console.log(err)
+    res.sendStatus(500)
+  }
 })
 
 app.get('/reviews/:product_id/meta', (req, res) => {
