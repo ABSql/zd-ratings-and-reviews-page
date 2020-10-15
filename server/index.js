@@ -8,8 +8,8 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('database connected')
-  const a = require('./database/bigcollection.js')
-  a.createProduct(['Fit', 'Length'])
+  // const a = require('./models/product.js')
+  // a.createProduct(['Fit', 'Length'])
 });
 
 
@@ -32,9 +32,16 @@ app.get('/reviews/:product_id/meta', (req, res) => {
   res.send(metaData)
 })
 
-app.post('/reviews/:product_id', (req, res) => {
-  const review = req.body
-  controllers.addReview(review)
+app.post('/reviews/:product_id', async (req, res) => {
+  const reviewData = req.body
+  try {
+    // await rev.createReview(req.params.product_id, reviewData)
+    res.sendStatus(201)
+  } catch(err) {
+    console.log(err)
+    res.sendStatus(500)
+  }
+  // controllers.addReview(review)
 })
 
 app.put('/reviews/helpful/:review_id', (req, res) => {

@@ -11,6 +11,7 @@ const sequenceSchema = new Schema({
 
 const Sequence = mongoose.model('Sequence', sequenceSchema)
 
+// used to access sequence documents for each id, so it can start 1 and count up
 const getNextSequenceValue = async (sequenceName) => {
   const sequenceDocument = await Sequence.findOneAndUpdate({_id: sequenceName },{$inc:{sequence_value:1}});
   return sequenceDocument.sequence_value;
@@ -48,21 +49,7 @@ const productSchema = new Schema({
 
 const Product = mongoose.model('Product', productSchema)
 
-const createProduct = async (chars) => {
-  console.log(chars)
-  const newProd = new Product({
-    _id: await getNextSequenceValue('productid'),
-    reviews: [],
-    characteristics: []
-  })
-  newProd.save((err) => {
-    if (err) throw err
-    if (chars) {chars.forEach(async (name) => {
-      await newProd.update({$push: { characteristics: { _id: await getNextSequenceValue("characteristic_id"), name: name, values: [] } }})
-    })}
-  })
-}
-
 module.exports = {
-  createProduct
+  Product,
+  getNextSequenceValue
 }
