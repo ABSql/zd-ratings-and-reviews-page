@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const reviews = require('./controllers/reviews.js')
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/sdc', {useNewUrlParser: true});
@@ -35,19 +36,23 @@ app.get('/reviews/:product_id/meta', (req, res) => {
 app.post('/reviews/:product_id', async (req, res) => {
   const reviewData = req.body
   try {
-    const rev = require('./models/review.js')
-    await rev.createReview(req.params.product_id, reviewData)
+    await reviews.addReview(req.params.product_id, reviewData)
     res.sendStatus(201)
   } catch(err) {
     console.log(err)
     res.sendStatus(500)
   }
-  // controllers.addReview(review)
 })
 
-app.put('/reviews/helpful/:review_id', (req, res) => {
-  const helpfulReview = req.body
-  controllers.markHelpful(helpfulReview)
+app.put('/reviews/helpful/:review_id', async (req, res) => {
+  const reviewId = req.params.review_id
+  try {
+    console.log( await reviews.markHelpful(reviewId) )
+    res.sendStatus(201)
+  } catch(err) {
+    console.log(err)
+    res.sendStatus(500)
+  }
 })
 
 app.put('/reviews/report/:review_id', (req, res) => {

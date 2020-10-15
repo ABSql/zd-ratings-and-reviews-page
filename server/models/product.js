@@ -9,11 +9,12 @@ const createProduct = async (chars) => {
     characteristics: []
   })
 
+  if (chars) {chars.forEach((name) => {
+    newProd.characteristics.push({name: name})
+  })}
+
   newProd.save((err) => {
     if (err) throw err
-    if (chars) {chars.forEach(async (name) => {
-      await newProd.update({$push: { characteristics: { _id: await product.getNextSequenceValue("characteristic_id"), name: name} }})
-    })}
   })
 }
 

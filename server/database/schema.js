@@ -17,39 +17,48 @@ const getNextSequenceValue = async (sequenceName) => {
   return sequenceDocument.sequence_value;
 }
 
+const photoSchema = new Schema({
+  // _id: Number,
+  url: String,
+})
+
+const Photo = mongoose.model('Photo', photoSchema)
+
+const reviewSchema = new Schema({
+  // _id: Number,
+  rating: Number,
+  summary: String,
+  body: String,
+  recommend: Number,
+  name: String,
+  email: String,
+  photos: [photoSchema],
+  characteristics: {},
+  helpfulness: Number,
+  report: Boolean,
+})
+
+const Review = mongoose.model('Review', reviewSchema)
+
+const characteristicSchema = new Schema({
+  // _id: Number,
+  name: String,
+})
+
+const Characteristic = mongoose.model('Characteristic', characteristicSchema)
+
 const productSchema = new Schema({
   _id: Number,
-  reviews: [
-    {
-      _id: Number,
-      rating: Number,
-      summary: String,
-      body: String,
-      recommend: Number,
-      name: String,
-      email: String,
-      photos: [
-        {
-          _id: Number,
-          url: String,
-        }
-      ],
-      characteristics: {},
-      helpfulness: Number,
-      report: Boolean,
-    }
-  ],
-  characteristics: [
-    {
-      _id: Number,
-      name: String,
-    }
-  ],
+  reviews: [reviewSchema],
+  characteristics: [characteristicSchema],
 })
 
 const Product = mongoose.model('Product', productSchema)
 
 module.exports = {
   Product,
+  Review,
+  Photo,
+  Characteristic,
   getNextSequenceValue
 }

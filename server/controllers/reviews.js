@@ -1,27 +1,35 @@
-const models = require('../models/reviews.js')
+const reviews = require('../models/review.js')
 
-export const getReviewsList = () => {
-
-}
-
-export const getReviewsMeta = () => {
+const getReviewsList = () => {
 
 }
 
-export const addReview = () => {
+const getReviewsMeta = () => {
 
 }
 
-export const markHelpful = () => {
+const addReview = (id, data) => {
+  return reviews.createReview(id, data)
+}
+
+const markHelpful = (id) => {
+  return reviews.markHelpful(id)
+}
+
+const reportReview = () => {
 
 }
 
-export const reportReview = () => {
+const removeReview = () => {
 
 }
 
-export const removeReview = () => {
-
+module.exports = {
+  getReviewsList,
+  getReviewsMeta,
+  addReview,
+  markHelpful,
+  reportReview,
+  removeReview,
 }
-
 
