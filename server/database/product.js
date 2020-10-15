@@ -23,12 +23,6 @@ const createNewProduct = (chars) => {
     chars.forEach((value, index) => {
       char.createCharacteristic(value, prodQuery)
     })
-    // awaiting createcharacteristic to complete then run populate
-    prodQuery.populate('characteristics')
-    .exec((err, characteristics) => {
-      if (err) return err
-      console.log('Populated characteristics, ', characteristics)
-    })
   })
 
 }

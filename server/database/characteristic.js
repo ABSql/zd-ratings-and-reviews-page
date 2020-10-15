@@ -9,10 +9,8 @@ const characteristicSchema = new Schema({
 const Characteristic = mongoose.model('Characteristic', characteristicSchema)
 
 const createCharacteristic = (name, prod) => {
-  console.log('in func')
   const char = new Characteristic({
     name: name,
-    product: prod._id,
     values: [],
   })
 
