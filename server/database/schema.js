@@ -34,6 +34,7 @@ const productSchema = new Schema({
           url: String,
         }
       ],
+      characteristics: {},
       helpfulness: Number,
       report: Boolean,
     }
@@ -42,7 +43,6 @@ const productSchema = new Schema({
     {
       _id: Number,
       name: String,
-      values: [Number],
     }
   ],
 })

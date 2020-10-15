@@ -8,8 +8,8 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('database connected')
-  // const a = require('./models/product.js')
-  // a.createProduct(['Fit', 'Length'])
+  // const a = require('./models/product')
+  // a.createProduct(["Fit", "Length", "Quality"])
 });
 
 
@@ -35,7 +35,8 @@ app.get('/reviews/:product_id/meta', (req, res) => {
 app.post('/reviews/:product_id', async (req, res) => {
   const reviewData = req.body
   try {
-    // await rev.createReview(req.params.product_id, reviewData)
+    const rev = require('./models/review.js')
+    await rev.createReview(req.params.product_id, reviewData)
     res.sendStatus(201)
   } catch(err) {
     console.log(err)

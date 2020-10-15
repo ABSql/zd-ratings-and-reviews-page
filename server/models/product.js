@@ -12,7 +12,7 @@ const createProduct = async (chars) => {
   newProd.save((err) => {
     if (err) throw err
     if (chars) {chars.forEach(async (name) => {
-      await newProd.update({$push: { characteristics: { _id: await product.getNextSequenceValue("characteristic_id"), name: name, values: [] } }})
+      await newProd.update({$push: { characteristics: { _id: await product.getNextSequenceValue("characteristic_id"), name: name} }})
     })}
   })
 }

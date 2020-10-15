@@ -9,7 +9,7 @@ const createReview = async (productId, data) => {
     }
     photosWithID.push(currentPhoto)
   }
-
+  console.log(data)
   const reviewData = {
     _id: await product.getNextSequenceValue("review_id"),
     rating: data.rating,
@@ -19,12 +19,12 @@ const createReview = async (productId, data) => {
     name: data.name,
     email: data.email,
     photos: photosWithID,
+    characteristics: data.characteristics,
     helpfulness: 0,
     report: false,
   }
 
   return product.Product.findOneAndUpdate({_id: productId}, {$push: {reviews: reviewData}})
-
 }
 
 module.exports = {
