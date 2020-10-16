@@ -20,8 +20,45 @@ const getReviewsList = async (id, count, page, sort) => {
   }
 }
 
-const getReviewsMeta = (id) => {
-  return reviews.getCharMeta(id)
+const getReviewsMeta = async (id) => {
+  const prodInfo = await reviews.getProduct(id)
+  const chars = {}
+  // create obj of the characteristic names and _id's
+  // char names are only store in the parent product
+  prodInfo.characteristics.forEach((value) => {
+    chars[value._id.toString()] = {
+      name: value.name
+    }
+  })
+  console.log(chars)
+  // get review meta data and format
+  const review = await reviews.getReviewsMeta(id)
+  const ratings = {}
+  review.forEach((value) => {
+    ratings[value._id] = value.count
+  })
+  // get recommended meta data and format
+  const recommend = await reviews.getRecommendMeta(id)
+  const recommendOutput = {}
+  recommend.forEach((value) => {
+    recommendOutput[value._id] = value.count
+  })
+  const charValues = await reviews.getCharMeta(id)
+  const charMeta = {}
+  charValues.forEach((value) => {
+    charMeta[chars[value._id].name] = {
+      id: value._id,
+      value: value.average
+    }
+  })
+  const output = {
+    product_id: id,
+    ratings: ratings,
+    recommended: recommendOutput,
+    characteristics: charMeta,
+  }
+
+  return output
 }
 
 const addReview = (id, data) => {

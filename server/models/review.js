@@ -28,6 +28,7 @@ const createReview = async (productId, data) => {
         value: data.characteristics[key]
       })
       char.save()
+      return prod
     }
   })
 }
@@ -108,6 +109,10 @@ const getCharMeta = (id) => {
   ])
 }
 
+const getProduct = (id) => {
+  return product.Product.findOne({_id: id})
+}
+
 module.exports = {
   createReview,
   markHelpful,
@@ -116,4 +121,5 @@ module.exports = {
   getReviewsMeta,
   getRecommendMeta,
   getCharMeta,
+  getProduct,
 }

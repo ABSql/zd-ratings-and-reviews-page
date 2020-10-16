@@ -7,10 +7,11 @@ mongoose.connect('mongodb://localhost/sdc', {useNewUrlParser: true});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
+db.once('open', async function() {
   console.log('database connected')
   // const a = require('./models/product')
-  // a.createProduct(["Fit", "Length"])
+  // const b = await a.createProduct(["Fit", "Length"])
+  // console.log(b)
 });
 
 
