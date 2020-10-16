@@ -26,11 +26,10 @@ const getReviewsMeta = async (id) => {
   // create obj of the characteristic names and _id's
   // char names are only store in the parent product
   prodInfo.characteristics.forEach((value) => {
-    chars[value._id.toString()] = {
+    chars[value._id] = {
       name: value.name
     }
   })
-  console.log(chars)
   // get review meta data and format
   const review = await reviews.getReviewsMeta(id)
   const ratings = {}

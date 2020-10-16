@@ -10,8 +10,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', async function() {
   console.log('database connected')
   // const a = require('./models/product')
-  // const b = await a.createProduct(["Fit", "Length"])
-  // console.log(b)
+  // const b = await a.createProduct([{uuid: "test1",name:"Fit"}, {uuid: "test2",name:"Size"}])
 });
 
 

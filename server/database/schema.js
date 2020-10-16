@@ -31,7 +31,6 @@ const reviewSchema = new Schema({
   name: String,
   email: String,
   photos: [photoSchema],
-  characteristics: {},
   helpfulness: Number,
   report: Boolean,
 })
@@ -39,6 +38,7 @@ const reviewSchema = new Schema({
 const Review = mongoose.model('Review', reviewSchema)
 
 const characteristicSchema = new Schema({
+  _id: String,
   name: String,
 })
 

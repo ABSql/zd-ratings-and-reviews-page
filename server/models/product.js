@@ -8,8 +8,8 @@ const createProduct = async (chars) => {
     characteristics: []
   })
 
-  if (chars) {chars.forEach((name) => {
-    newProd.characteristics.push({name: name})
+  if (chars) {chars.forEach((char) => {
+    newProd.characteristics.push({_id: char.uuid, name: char.name})
   })}
 
   return newProd.save((err, prod) => {

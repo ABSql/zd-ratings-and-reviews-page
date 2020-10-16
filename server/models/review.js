@@ -11,7 +11,6 @@ const createReview = async (productId, data) => {
     name: data.name,
     email: data.email,
     photos: [],
-    characteristics: data.characteristics,
     helpfulness: 0,
     report: false,
   })
@@ -27,8 +26,8 @@ const createReview = async (productId, data) => {
         char_id: key,
         value: data.characteristics[key]
       })
+
       char.save()
-      return prod
     }
   })
 }
