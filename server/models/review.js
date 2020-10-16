@@ -45,17 +45,20 @@ const reportReview = (id) => {
   })
 }
 
-const getReviewsList = (id, count, page, sort) => {
-  return product.Product.findOne({_id: id})
-    // .exec((err, prod) => {
-    //   if (err) throw err
-    //   // starting place for slice is determined by page size and count
-    //   //ex page = 1 and count = 2 should return the second total review
-    //   const startIndex = (page - 1) * count
-    //   const endIndex = startIndex + count
-    //   const reviewList = prod.reviews.slice(startIndex, endIndex)
-    //   return reviewList
-    // })
+const getReviewsList = async (id, count, page, sort) => {
+  return product.Product.aggregate([
+    {$match: {_id: parseInt(id)}},
+    {$project: {
+      reviews: {$filter:
+          {
+            input: '$reviews',
+            as: 'review',
+            cond: { $eq: ['$$review.report', false]}
+          }
+        }
+      }
+    },
+  ])
 }
 
 module.exports = {

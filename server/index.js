@@ -29,7 +29,6 @@ app.get('/reviews/:product_id/list', async (req, res) => {
   const sort = req.query.sort ? req.query.sort : 'newest'
   try {
     const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)
-    console.log('reviews: ', reviewList)
     res.status(201).send(reviewList)
   } catch(err) {
     console.log(err)
