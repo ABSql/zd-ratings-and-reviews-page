@@ -7,7 +7,7 @@ const getReviewsList = async (id, count, page, sort) => {
     // ex page = 1 and count = 2 should return the second total review
     const startIndex = (page - 1) * count
     const endIndex = startIndex + count
-    const reviewList = list[0].reviews.slice(startIndex, endIndex)
+    const reviewList = list.slice(startIndex, endIndex)
     const output = {
       product: id,
       page: page,
@@ -20,8 +20,8 @@ const getReviewsList = async (id, count, page, sort) => {
   }
 }
 
-const getReviewsMeta = () => {
-
+const getReviewsMeta = (id) => {
+  return reviews.getReviewsMeta(id)
 }
 
 const addReview = (id, data) => {

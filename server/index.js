@@ -36,9 +36,15 @@ app.get('/reviews/:product_id/list', async (req, res) => {
   }
 })
 
-app.get('/reviews/:product_id/meta', (req, res) => {
-  const metaData = controllers.getReviewsMeta(req.params.product_id)
-  res.send(metaData)
+app.get('/reviews/:product_id/meta', async (req, res) => {
+  try {
+    const meta = await reviews.getReviewsMeta(req.params.product_id)
+    console.log(meta)
+    res.sendStatus(201)
+  } catch(err) {
+    console.log(err)
+    res.sendStatus(500)
+  }
 })
 
 app.post('/reviews/:product_id', async (req, res) => {

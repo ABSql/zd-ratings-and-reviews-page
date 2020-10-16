@@ -61,9 +61,23 @@ const getReviewsList = async (id, count, page, sort) => {
   ])
 }
 
+const getReviewsMeta = (id) => {
+  return product.Product.aggregate([
+    {$match: {_id: parseInt(id)}},
+    {$unwind: '$reviews'},
+    {$group:
+        {
+          _id: '$reviews.rating',
+          count: {$sum: 1}
+        }
+      },
+  ])
+}
+
 module.exports = {
   createReview,
   markHelpful,
   reportReview,
   getReviewsList,
+  getReviewsMeta,
 }
