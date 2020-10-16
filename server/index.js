@@ -29,7 +29,7 @@ app.get('/reviews/:product_id/list', async (req, res) => {
   const sort = req.query.sort ? req.query.sort : 'newest'
   try {
     const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)
-    res.status(201).send(reviewList)
+    res.status(200).send(reviewList)
   } catch(err) {
     console.log(err)
     res.sendStatus(500)
@@ -39,8 +39,7 @@ app.get('/reviews/:product_id/list', async (req, res) => {
 app.get('/reviews/:product_id/meta', async (req, res) => {
   try {
     const meta = await reviews.getReviewsMeta(req.params.product_id)
-    console.log(meta)
-    res.sendStatus(201)
+    res.status(200).send(meta)
   } catch(err) {
     console.log(err)
     res.sendStatus(500)

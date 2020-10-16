@@ -1,5 +1,6 @@
 const product = require('../database/schema.js')
 
+// takes in array that is [{uuid: char_uuid, name: char_name}]
 const createProduct = async (chars) => {
 
   const newProd = new product.Product({

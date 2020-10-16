@@ -9,6 +9,7 @@ const productSchema = new Schema({
 
 const Product = mongoose.model('Product', productSchema)
 
+
 const createNewProduct = (chars) => {
   const prod = new Product({
     reviews: [],
