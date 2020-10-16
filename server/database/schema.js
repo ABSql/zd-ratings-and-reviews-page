@@ -18,14 +18,12 @@ const getNextSequenceValue = async (sequenceName) => {
 }
 
 const photoSchema = new Schema({
-  // _id: Number,
   url: String,
 })
 
 const Photo = mongoose.model('Photo', photoSchema)
 
 const reviewSchema = new Schema({
-  // _id: Number,
   rating: Number,
   summary: String,
   body: String,
@@ -41,11 +39,18 @@ const reviewSchema = new Schema({
 const Review = mongoose.model('Review', reviewSchema)
 
 const characteristicSchema = new Schema({
-  // _id: Number,
   name: String,
 })
 
 const Characteristic = mongoose.model('Characteristic', characteristicSchema)
+
+const charvalueSchema = new Schema({
+  prod_id: Number,
+  char_id: String,
+  value: Number,
+})
+
+const Charvalue = mongoose.model('Charvalue', charvalueSchema)
 
 const productSchema = new Schema({
   _id: Number,
@@ -60,5 +65,6 @@ module.exports = {
   Review,
   Photo,
   Characteristic,
+  Charvalue,
   getNextSequenceValue
 }

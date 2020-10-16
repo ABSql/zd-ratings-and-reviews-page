@@ -20,7 +20,16 @@ const createReview = async (productId, data) => {
     reviewData.photos.push({url: url})
   })}
 
-  return product.Product.findOneAndUpdate({_id: productId}, {$push: {reviews: reviewData}})
+  return product.Product.findOneAndUpdate({_id: productId}, {$push: {reviews: reviewData}}).exec((err, prod) => {
+    for (key in data.characteristics) {
+      let char = new product.Charvalue({
+        prod_id: productId,
+        char_id: key,
+        value: data.characteristics[key]
+      })
+      char.save()
+    }
+  })
 }
 
 const markHelpful = (id) => {
@@ -37,7 +46,7 @@ const markHelpful = (id) => {
 
 const reportReview = (id) => {
   return product.Product.findOne({'reviews._id': id}, (err, prod) => {
-    // select review with input id and increment helpfullness by 1
+    // select review with input id and change report from false to true
     prod.reviews.id(id).report = true
     prod.save((err) => {
       if (err) throw err
@@ -74,10 +83,37 @@ const getReviewsMeta = (id) => {
   ])
 }
 
+const getRecommendMeta = (id) => {
+  return product.Product.aggregate([
+    {$match: {_id: parseInt(id)}},
+    {$unwind: '$reviews'},
+    {$group:
+        {
+          _id: '$reviews.recommend',
+          count: {$sum: 1}
+        }
+      },
+  ])
+}
+
+const getCharMeta = (id) => {
+  return product.Charvalue.aggregate([
+    {$match: {prod_id: parseInt(id)}},
+    {$group:
+        {
+          _id: '$char_id',
+          average: {$avg: '$value'}
+        }
+      },
+  ])
+}
+
 module.exports = {
   createReview,
   markHelpful,
   reportReview,
   getReviewsList,
   getReviewsMeta,
+  getRecommendMeta,
+  getCharMeta,
 }

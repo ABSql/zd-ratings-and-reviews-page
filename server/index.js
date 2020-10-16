@@ -10,7 +10,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('database connected')
   // const a = require('./models/product')
-  // a.createProduct(["Fit", "Length", "Quality"])
+  // a.createProduct(["Fit", "Length"])
 });
 
 

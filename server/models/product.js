@@ -13,8 +13,9 @@ const createProduct = async (chars) => {
     newProd.characteristics.push({name: name})
   })}
 
-  newProd.save((err) => {
+  return newProd.save((err, prod) => {
     if (err) throw err
+    return prod
   })
 }
 

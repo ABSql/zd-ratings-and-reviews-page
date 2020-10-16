@@ -21,7 +21,7 @@ const getReviewsList = async (id, count, page, sort) => {
 }
 
 const getReviewsMeta = (id) => {
-  return reviews.getReviewsMeta(id)
+  return reviews.getCharMeta(id)
 }
 
 const addReview = (id, data) => {
