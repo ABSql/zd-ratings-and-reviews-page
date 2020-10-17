@@ -21,36 +21,26 @@ const getReviewsList = async (id, count, page, sort) => {
 }
 
 const getReviewsMeta = async (id) => {
+  // get reviews meta data
   let meta = await reviews.getAllMeta(id)
-  meta = meta[0]
-  console.log(meta.reviews)
-  console.log(meta.recommend)
-  console.log(meta.characteristics)
+  console.log(meta[0])
+  const ratings = meta[0].reviews
+  const recommended = meta[0].recommend
+  const charavg = meta[0].characteristics
   const prodInfo = await reviews.getProduct(id)
-  const chars = {}
+  const productChars= {}
   // create obj of the characteristic names and _id's
-  // char names are only store in the parent product
+  // char names are only stored in the parent product chars array
   prodInfo.characteristics.forEach((value) => {
-    chars[value._id] = {
+    productChars[value._id] = {
       name: value.name
     }
   })
-  // get review meta data and format
-  const review = await reviews.getReviewsMeta(id)
-  const ratings = {}
-  review.forEach((value) => {
-    ratings[value._id] = value.count
-  })
-  // get recommended meta data and format
-  const recommend = await reviews.getRecommendMeta(id)
-  const recommendOutput = {}
-  recommend.forEach((value) => {
-    recommendOutput[value._id] = value.count
-  })
-  const charValues = await reviews.getCharMeta(id)
+  // format characteristics meta data
+  // charavg _id corresponds to a key in the productChars array
   const charMeta = {}
-  charValues.forEach((value) => {
-    charMeta[chars[value._id].name] = {
+  charavg.forEach((value) => {
+    charMeta[productChars[value._id].name] = {
       id: value._id,
       value: value.average
     }
@@ -58,7 +48,7 @@ const getReviewsMeta = async (id) => {
   const output = {
     product_id: id,
     ratings: ratings,
-    recommended: recommendOutput,
+    recommended: recommended,
     characteristics: charMeta,
   }
 

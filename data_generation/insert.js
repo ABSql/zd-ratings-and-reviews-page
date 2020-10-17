@@ -46,3 +46,49 @@ console.log('Database seeded!')
 console.timeEnd('total time')
 client.close()
 })
+
+// db.products.explain('executionStats').aggregate([
+//   {$match: {_id: 19000}},
+//   {$project: {
+//     reviews: {$filter:
+//         {
+//           input: '$reviews',
+//           as: 'review',
+//           cond: { $eq: ['$$review.report', false]}
+//         }
+//       }
+//     }
+//   },
+// ])
+
+// db.products.explain('executionStats').aggregate([
+//     {$match: {_id: parseInt(190000)}},
+//     {$unwind: '$reviews'},
+//     {$facet: {
+//       reviews: [
+//         {$group:
+//           {
+//             _id: '$reviews.rating',
+//             count: {$sum: 1}
+//           }
+//       }
+//       ],
+//       recommend: [
+//         {$group:
+//             {
+//               _id: '$reviews.recommend',
+//               count: {$sum: 1}
+//             }
+//           }
+//       ],
+//       characteristics: [
+//         {$unwind: '$reviews.characteristics'},
+//         {$group:
+//             {
+//               _id: '$reviews.characteristics._id',
+//               average: {$avg: '$reviews.characteristics.value'}
+//             }
+//           }
+//       ],
+//     }}
+//   ])
