@@ -21,6 +21,11 @@ const getReviewsList = async (id, count, page, sort) => {
 }
 
 const getReviewsMeta = async (id) => {
+  let meta = await reviews.getAllMeta(id)
+  meta = meta[0]
+  console.log(meta.reviews)
+  console.log(meta.recommend)
+  console.log(meta.characteristics)
   const prodInfo = await reviews.getProduct(id)
   const chars = {}
   // create obj of the characteristic names and _id's
@@ -38,13 +43,11 @@ const getReviewsMeta = async (id) => {
   })
   // get recommended meta data and format
   const recommend = await reviews.getRecommendMeta(id)
-  console.log(recommend)
   const recommendOutput = {}
   recommend.forEach((value) => {
     recommendOutput[value._id] = value.count
   })
   const charValues = await reviews.getCharMeta(id)
-  console.log('charValues: ', charValues)
   const charMeta = {}
   charValues.forEach((value) => {
     charMeta[chars[value._id].name] = {

@@ -14,7 +14,7 @@ MongoClient.connect(url, async (err, client) => {
   const prodCollection = db.collection("products")
   let id = 1
   let charId = 1
-  for (let k = 0; k < 1; k++){
+  for (let k = 0; k < 10; k++){
     let products = []
   // create i number of reviews
   console.time('data generation time')
