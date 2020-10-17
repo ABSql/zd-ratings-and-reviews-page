@@ -38,11 +38,13 @@ const getReviewsMeta = async (id) => {
   })
   // get recommended meta data and format
   const recommend = await reviews.getRecommendMeta(id)
+  console.log(recommend)
   const recommendOutput = {}
   recommend.forEach((value) => {
     recommendOutput[value._id] = value.count
   })
   const charValues = await reviews.getCharMeta(id)
+  console.log('charValues: ', charValues)
   const charMeta = {}
   charValues.forEach((value) => {
     charMeta[chars[value._id].name] = {

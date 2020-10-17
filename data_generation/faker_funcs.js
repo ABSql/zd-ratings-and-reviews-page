@@ -1,11 +1,11 @@
 const faker = require('faker')
 const fs = require('fs')
 
-const createProduct = (id) => {
+const createProduct = (id, charIds) => {
   const inputArray = []
-  for (let i = 0; i < faker.random.number({'min': 1, 'max': 5}); i++) {
+  for (let i = 0; i < charIds.length; i++) {
     let char = {
-      _id: faker.random.uuid(),
+      _id: charIds[i],
       name: faker.commerce.productAdjective()
     }
     inputArray.push(char)
@@ -18,7 +18,7 @@ const createProduct = (id) => {
   return prod
 }
 
-const createReview = () => {
+const createReview = (charIds) => {
   const rating = faker.random.number({'min': 1, 'max': 5})
   const summary = faker.lorem.sentence()
   const body = faker.lorem.sentences(2, '. ')
@@ -28,6 +28,14 @@ const createReview = () => {
   const photos = []
   for (let i = 0; i < faker.random.number(3); i++){
     photos.push(faker.internet.domainName())
+  }
+  const characteristics = []
+  for (let i = 0; i < charIds.length; i++) {
+    let char = {
+      _id: charIds[i],
+      value: faker.random.number({'min': 1, 'max': 5})
+    }
+    characteristics.push(char)
   }
   const helpfulness = 0
   const report = false
@@ -40,33 +48,24 @@ const createReview = () => {
     name,
     email,
     photos,
+    characteristics,
     helpfulness,
     report,
   }
   return output
 }
 
-const createCharEntry = (prodId, char) => {
-  const characteristic = {
-    prod_id: prodId,
-    char_id: char._id,
-    value: faker.random.number({'min': 1, 'max': 5}),
-  }
-  return characteristic
-}
-
 // create product and populate with random num of reviews
-const createProductEntry = (id, numReviews) => {
-  const newProduct = createProduct(id)
+const createProductEntry = (id, numReviews, chars) => {
+  const newProduct = createProduct(id, chars)
   for (let i = 0; i < numReviews; i++) {
-    newProduct.reviews.push(createReview())
+    newProduct.reviews.push(createReview(chars))
   }
   return newProduct
 }
 
 module.exports = {
   createProductEntry,
-  createCharEntry,
   createReview,
   createProduct
 }

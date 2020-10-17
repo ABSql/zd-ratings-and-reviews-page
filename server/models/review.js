@@ -97,12 +97,14 @@ const getRecommendMeta = (id) => {
 }
 
 const getCharMeta = (id) => {
-  return product.Charvalue.aggregate([
-    {$match: {prod_id: parseInt(id)}},
+  return product.Product.aggregate([
+    {$match: {_id: parseInt(id)}},
+    {$unwind: '$reviews'},
+    {$unwind: '$reviews.characteristics'},
     {$group:
         {
-          _id: '$char_id',
-          average: {$avg: '$value'}
+          _id: '$reviews.characteristics._id',
+          average: {$avg: '$reviews.characteristics.value'}
         }
       },
   ])

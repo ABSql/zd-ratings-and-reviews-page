@@ -8,41 +8,41 @@ const dbName = 'sdc'
 
 MongoClient.connect(url, async (err, client) => {
   if (err) throw err
-  console.time('insert time')
+  console.time('total time')
 
   const db = client.db(dbName)
   const prodCollection = db.collection("products")
-  const charCollection = db.collection("charvalues")
   let id = 1
+  let charId = 1
   for (let k = 0; k < 1; k++){
     let products = []
-    let chars = []
   // create i number of reviews
+  console.time('data generation time')
     for (let i = 0; i < 1000000; i++) {
       let numReviews = faker.random.number({'min': 0, 'max': 50})
-      let prodEntry = fakerFunc.createProductEntry(id, numReviews)
-      products.push(prodEntry)
-      // for each product create numReviews character documents for each
-      // product characteristic
-      for (let j = 0; j < prodEntry.characteristics.length; j++) {
-        let currentChar = prodEntry.characteristics[j]
-        for (let k = 0; k < numReviews; k++) {
-          let charEntry = fakerFunc.createCharEntry(id, currentChar)
-          chars.push(charEntry)
-        }
+      let numChars = faker.random.number({'min': 0, 'max': 5})
+      let charArray = []
+      //generate array of characteristic id's
+      for (let i = 0; i < numChars; i++) {
+        charArray.push(charId)
+        charId += 1
       }
+      let prodEntry = fakerFunc.createProductEntry(id, numReviews, charArray)
+      products.push(prodEntry)
       // subtract 1 b/c loop is adding 1
       i += (numReviews - 1)
       id += 1
     } try{
+      console.timeEnd('data generation time')
+      console.time('data insert time')
       await prodCollection.insertMany(products)
-      await charCollection.insertMany(chars)
+      console.timeEnd('data insert time')
       console.log('seeded ', k, ' times')
     } catch (e) {
       console.log(e)
     }
 }
 console.log('Database seeded!')
-console.timeEnd('insert time')
+console.timeEnd('total time')
 client.close()
 })
