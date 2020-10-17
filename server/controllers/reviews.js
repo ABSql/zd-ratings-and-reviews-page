@@ -43,7 +43,6 @@ const getReviewsMeta = async (id) => {
     recommendOutput[value._id] = value.count
   })
   const charValues = await reviews.getCharMeta(id)
-  console.log(charValues)
   const charMeta = {}
   charValues.forEach((value) => {
     charMeta[chars[value._id].name] = {
