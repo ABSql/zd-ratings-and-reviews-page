@@ -74,6 +74,7 @@
     "file-loader": "^6.1.0",
     "html-webpack-plugin": "^4.5.0",
     "mark.js": "^8.11.1",
+    "mongodb": "^3.6.2",
     "purgecss-webpack-plugin": "^3.0.0",
     "react-addons-test-utils": "^15.6.2",
     "style-loader": "^1.2.1",
