@@ -9,8 +9,6 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', async function() {
   console.log('database connected')
-  // const a = require('./models/product')
-  // const b = await a.createProduct([{uuid: "test1",name:"Fit"}, {uuid: "test2",name:"Size"}])
 });
 
 
@@ -60,7 +58,7 @@ app.post('/reviews/:product_id', async (req, res) => {
 app.put('/reviews/helpful/:review_id', async (req, res) => {
   const reviewId = req.params.review_id
   try {
-    console.log( await reviews.markHelpful(reviewId) )
+    console.log(await reviews.markHelpful(reviewId))
     res.sendStatus(201)
   } catch(err) {
     console.log(err)

@@ -14,7 +14,7 @@ MongoClient.connect(url, async (err, client) => {
   const prodCollection = db.collection("products")
   let id = 1
   let charId = 1
-  for (let k = 0; k < 10; k++){
+  for (let k = 0; k < 1; k++){
     let products = []
   // create i number of reviews
   console.time('data generation time')
@@ -62,7 +62,7 @@ client.close()
 // ])
 
 // db.products.explain('executionStats').aggregate([
-//     {$match: {_id: parseInt(190000)}},
+//     {$match: {_id: {$gt: 100000, $lt: 100010}}},
 //     {$unwind: '$reviews'},
 //     {$facet: {
 //       reviews: [
@@ -92,3 +92,8 @@ client.close()
 //       ],
 //     }}
 //   ])
+
+
+// db.products.explain('executionStats').update({_id: 199800}, {$push: {'reviews': {"rating":1,"summary":"Voluptatem dolores dolor.","body":"Deleniti aut deleniti iste dolorum mollitia esse quibusdam quia sit.. Et quis accusamus nam ipsa numquam dolore omnis et vitae.","recommend":0,"name":"Ayana","email":"Mackenzie51@yahoo.com","photos":["ethyl.com"],"characteristics":[{"_id":1,"value":2},{"_id":2,"value":1}],"helpfulness":0,"report":false}}})
+
+// db.products.update({_id: 199800}, {$push: {'reviews': {"rating":1,"summary":"Voluptatem dolores dolor.","body":"Deleniti aut deleniti iste dolorum mollitia esse quibusdam quia sit.. Et quis accusamus nam ipsa numquam dolore omnis et vitae.","recommend":0,"name":"Ayana","email":"Mackenzie51@yahoo.com","photos":["ethyl.com"],"characteristics":[{"_id":1,"value":2},{"_id":2,"value":1}],"helpfulness":0,"report":false}}})

@@ -1,4 +1,5 @@
 const faker = require('faker')
+const ids = require('mongoose')
 const fs = require('fs')
 
 const createProduct = (id, charIds) => {
@@ -19,6 +20,7 @@ const createProduct = (id, charIds) => {
 }
 
 const createReview = (charIds) => {
+  const _id = ids.Types.ObjectId()
   const rating = faker.random.number({'min': 1, 'max': 5})
   const summary = faker.lorem.sentence()
   const body = faker.lorem.sentences(2, '. ')
@@ -27,7 +29,11 @@ const createReview = (charIds) => {
   const email = faker.internet.email()
   const photos = []
   for (let i = 0; i < faker.random.number(3); i++){
-    photos.push(faker.internet.domainName())
+    let photoEntry = {
+      // _id: ids.Types.ObjectId(),
+      url: faker.image.imageUrl()
+    }
+    photos.push(photoEntry)
   }
   const characteristics = []
   for (let i = 0; i < charIds.length; i++) {
@@ -41,6 +47,7 @@ const createReview = (charIds) => {
   const report = false
 
   const output = {
+    // _id,
     rating,
     summary,
     body,
