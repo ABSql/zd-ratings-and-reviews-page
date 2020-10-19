@@ -5,9 +5,16 @@ const getReviewsList = async (id, count, page, sort) => {
     const list = await reviews.getReviewsList(id, count, page, sort)
     // starting place for slice is determined by page size and count
     // ex page = 1 and count = 2 should return the second total review
+    let returnReviews = list[0].reviews
+    // sort by most helpful first
+    if (sort === 'helpful') {
+      returnReviews = list[0].reviews.sort((a, b) => {
+        return b.helpfulness - a.helpfulness
+      })
+    }
     const startIndex = (page - 1) * count
-    const endIndex = startIndex + count
-    const reviewList = list.slice(startIndex, endIndex)
+    const endIndex = (startIndex + count)
+    const reviewList = returnReviews.slice(startIndex, endIndex)
     const output = {
       product: id,
       page: page,
@@ -28,7 +35,6 @@ const getReviewsMeta = async (id) => {
   ratingMeta ={}
   ratingInfo.forEach((value) => {
     ratingMeta[value._id] = value.count
-    console.log(ratingMeta)
   })
 
   const recommended = meta[0].recommend
@@ -63,7 +69,6 @@ const getReviewsMeta = async (id) => {
     recommended: recommendMeta,
     characteristics: charMeta,
   }
-
   return output
 }
 

@@ -22,8 +22,8 @@ app.use(express.static('../client/dist'));
 
 // Requests here
 app.get('/reviews/:product_id/list', async (req, res) => {
-  const count = req.query.count ? req.query.count : 5
-  const page = req.query.page ? req.query.page : 1
+  const count = req.query.count ? parseInt(req.query.count) : 5
+  const page = req.query.page ? parseInt(req.query.page) : 1
   const sort = req.query.sort ? req.query.sort : 'newest'
   try {
     const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)

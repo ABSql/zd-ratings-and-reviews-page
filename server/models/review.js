@@ -26,31 +26,6 @@ const createReview = async (productId, data) => {
   return product.Product.update({_id: productId}, {$push: {reviews: reviewData}})
 }
 
-/**** if product hasnt beene edited it will have string as _id, if it has been edited
- * it will have objectid as _id, either handle that here or fix in data generation
- */
-// const markHelpful = async (id) => {
-//   const objId = mongoose.Types.ObjectId(id)
-//   const prod = await product.Product.aggregate([
-//     {$match: {'reviews._id': objId}},
-//   ])
-//   // have prod id can now replace at review id
-//   console.log(prod)
-//   let newprod = prod[0]
-//   for (let i = 0; i < newprod.reviews.length; i++) {
-//     let string = newprod.reviews[i]._id.toString()
-//     // console.log(string1)
-//     if (string === id) {
-//       newprod.reviews[i].helpfulness += 1
-//       console.log('here')
-//       break
-//     }
-//   }
-//   product.Product.findByIdAndUpdate(newprod._id, newprod, (err, prod) => {
-//     if (err) throw err
-//     prod.save()
-//   })
-// }
 
 const markHelpful = (id) => {
   // find product containing review with input id
@@ -78,6 +53,8 @@ const reportReview = (id) => {
 const getReviewsList = async (id, count, page, sort) => {
   return product.Product.aggregate([
     {$match: {_id: parseInt(id)}},
+    // {$sort : {'reviews.helpfulness': 1}},
+    // {$sort: {'reviews.report': 1}}
     {$project: {
       reviews: {$filter:
           {
@@ -85,7 +62,7 @@ const getReviewsList = async (id, count, page, sort) => {
             as: 'review',
             cond: { $eq: ['$$review.report', false]}
           }
-        }
+        },
       }
     },
   ])
@@ -180,3 +157,6 @@ module.exports = {
   getProduct,
   getAllMeta,
 }
+
+
+
