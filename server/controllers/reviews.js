@@ -23,9 +23,20 @@ const getReviewsList = async (id, count, page, sort) => {
 const getReviewsMeta = async (id) => {
   // get reviews meta data
   let meta = await reviews.getAllMeta(id)
-  console.log(meta[0])
-  const ratings = meta[0].reviews
+
+  const ratingInfo = meta[0].reviews
+  ratingMeta ={}
+  ratingInfo.forEach((value) => {
+    ratingMeta[value._id] = value.count
+    console.log(ratingMeta)
+  })
+
   const recommended = meta[0].recommend
+  recommendMeta ={}
+  recommended.forEach((value) => {
+    recommendMeta[value._id] = value.count
+  })
+
   const charavg = meta[0].characteristics
   const prodInfo = await reviews.getProduct(id)
   const productChars= {}
@@ -45,10 +56,11 @@ const getReviewsMeta = async (id) => {
       value: value.average
     }
   })
+
   const output = {
     product_id: id,
-    ratings: ratings,
-    recommended: recommended,
+    ratings: ratingMeta,
+    recommended: recommendMeta,
     characteristics: charMeta,
   }
 
