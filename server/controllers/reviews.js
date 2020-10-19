@@ -5,9 +5,16 @@ const getReviewsList = async (id, count, page, sort) => {
     const list = await reviews.getReviewsList(id, count, page, sort)
     // starting place for slice is determined by page size and count
     // ex page = 1 and count = 2 should return the second total review
+    let returnReviews = list[0].reviews
+    // sort by most helpful first
+    if (sort === 'helpful') {
+      returnReviews = list[0].reviews.sort((a, b) => {
+        return b.helpfulness - a.helpfulness
+      })
+    }
     const startIndex = (page - 1) * count
-    const endIndex = startIndex + count
-    const reviewList = list.slice(startIndex, endIndex)
+    const endIndex = (startIndex + count)
+    const reviewList = returnReviews.slice(startIndex, endIndex)
     const output = {
       product: id,
       page: page,
@@ -21,42 +28,47 @@ const getReviewsList = async (id, count, page, sort) => {
 }
 
 const getReviewsMeta = async (id) => {
+  // get reviews meta data
+  let meta = await reviews.getAllMeta(id)
+
+  const ratingInfo = meta[0].reviews
+  ratingMeta ={}
+  ratingInfo.forEach((value) => {
+    ratingMeta[value._id] = value.count
+  })
+
+  const recommended = meta[0].recommend
+  recommendMeta ={}
+  recommended.forEach((value) => {
+    recommendMeta[value._id] = value.count
+  })
+
+  const charavg = meta[0].characteristics
   const prodInfo = await reviews.getProduct(id)
-  const chars = {}
+  const productChars= {}
   // create obj of the characteristic names and _id's
-  // char names are only store in the parent product
+  // char names are only stored in the parent product chars array
   prodInfo.characteristics.forEach((value) => {
-    chars[value._id] = {
+    productChars[value._id] = {
       name: value.name
     }
   })
-  // get review meta data and format
-  const review = await reviews.getReviewsMeta(id)
-  const ratings = {}
-  review.forEach((value) => {
-    ratings[value._id] = value.count
-  })
-  // get recommended meta data and format
-  const recommend = await reviews.getRecommendMeta(id)
-  const recommendOutput = {}
-  recommend.forEach((value) => {
-    recommendOutput[value._id] = value.count
-  })
-  const charValues = await reviews.getCharMeta(id)
+  // format characteristics meta data
+  // charavg _id corresponds to a key in the productChars array
   const charMeta = {}
-  charValues.forEach((value) => {
-    charMeta[chars[value._id].name] = {
+  charavg.forEach((value) => {
+    charMeta[productChars[value._id].name] = {
       id: value._id,
       value: value.average
     }
   })
+
   const output = {
     product_id: id,
-    ratings: ratings,
-    recommended: recommendOutput,
+    ratings: ratingMeta,
+    recommended: recommendMeta,
     characteristics: charMeta,
   }
-
   return output
 }
 

@@ -9,8 +9,6 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', async function() {
   console.log('database connected')
-  // const a = require('./models/product')
-  // const b = await a.createProduct([{uuid: "test1",name:"Fit"}, {uuid: "test2",name:"Size"}])
 });
 
 
@@ -24,8 +22,8 @@ app.use(express.static('../client/dist'));
 
 // Requests here
 app.get('/reviews/:product_id/list', async (req, res) => {
-  const count = req.query.count ? req.query.count : 5
-  const page = req.query.page ? req.query.page : 1
+  const count = req.query.count ? parseInt(req.query.count) : 5
+  const page = req.query.page ? parseInt(req.query.page) : 1
   const sort = req.query.sort ? req.query.sort : 'newest'
   try {
     const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)
@@ -60,7 +58,7 @@ app.post('/reviews/:product_id', async (req, res) => {
 app.put('/reviews/helpful/:review_id', async (req, res) => {
   const reviewId = req.params.review_id
   try {
-    console.log( await reviews.markHelpful(reviewId) )
+    await reviews.markHelpful(reviewId)
     res.sendStatus(201)
   } catch(err) {
     console.log(err)
@@ -71,7 +69,7 @@ app.put('/reviews/helpful/:review_id', async (req, res) => {
 app.put('/reviews/report/:review_id', async (req, res) => {
   const reportedReview = req.params.review_id
   try {
-    console.log( await reviews.reportReview(reportedReview) )
+    await reviews.reportReview(reportedReview)
     res.sendStatus(201)
   } catch(err) {
     console.log(err)

@@ -1,4 +1,7 @@
 const product = require('../database/schema.js')
+var MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose')
+var url = "mongodb://localhost:27017/";
 
 const createReview = async (productId, data) => {
 
@@ -11,6 +14,7 @@ const createReview = async (productId, data) => {
     name: data.name,
     email: data.email,
     photos: [],
+    characteristics: data.characteristics,
     helpfulness: 0,
     report: false,
   })
@@ -19,35 +23,27 @@ const createReview = async (productId, data) => {
     reviewData.photos.push({url: url})
   })}
 
-  return product.Product.findOneAndUpdate({_id: productId}, {$push: {reviews: reviewData}}).exec((err, prod) => {
-    for (key in data.characteristics) {
-      let char = new product.Charvalue({
-        prod_id: productId,
-        char_id: key,
-        value: data.characteristics[key]
-      })
-
-      char.save()
-    }
-  })
+  return product.Product.update({_id: productId}, {$push: {reviews: reviewData}})
 }
+
 
 const markHelpful = (id) => {
   // find product containing review with input id
-  return product.Product.findOne({'reviews._id': id}, (err, prod) => {
+  const reviewId = mongoose.Types.ObjectId(id)
+  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
     // select review with input id and increment helpfullness by 1
-    prod.reviews.id(id).helpfulness += 1
+    prod.reviews.id(reviewId).helpfulness += 1
     prod.save((err) => {
       if (err) throw err
     })
   })
-
 }
 
 const reportReview = (id) => {
-  return product.Product.findOne({'reviews._id': id}, (err, prod) => {
+  const reviewId = mongoose.Types.ObjectId(id)
+  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
     // select review with input id and change report from false to true
-    prod.reviews.id(id).report = true
+    prod.reviews.id(reviewId).report = true
     prod.save((err) => {
       if (err) throw err
     })
@@ -57,6 +53,8 @@ const reportReview = (id) => {
 const getReviewsList = async (id, count, page, sort) => {
   return product.Product.aggregate([
     {$match: {_id: parseInt(id)}},
+    // {$sort : {'reviews.helpfulness': 1}},
+    // {$sort: {'reviews.report': 1}}
     {$project: {
       reviews: {$filter:
           {
@@ -64,7 +62,7 @@ const getReviewsList = async (id, count, page, sort) => {
             as: 'review',
             cond: { $eq: ['$$review.report', false]}
           }
-        }
+        },
       }
     },
   ])
@@ -97,14 +95,50 @@ const getRecommendMeta = (id) => {
 }
 
 const getCharMeta = (id) => {
-  return product.Charvalue.aggregate([
-    {$match: {prod_id: parseInt(id)}},
+  return product.Product.aggregate([
+    {$match: {_id: parseInt(id)}},
+    {$unwind: '$reviews'},
+    {$unwind: '$reviews.characteristics'},
     {$group:
         {
-          _id: '$char_id',
-          average: {$avg: '$value'}
+          _id: '$reviews.characteristics._id',
+          average: {$avg: '$reviews.characteristics.value'}
         }
       },
+  ])
+}
+
+const getAllMeta = (id) => {
+  return product.Product.aggregate([
+    {$match: {_id: parseInt(id)}},
+    {$unwind: '$reviews'},
+    {$facet: {
+      reviews: [
+        {$group:
+          {
+            _id: '$reviews.rating',
+            count: {$sum: 1}
+          }
+      }
+      ],
+      recommend: [
+        {$group:
+            {
+              _id: '$reviews.recommend',
+              count: {$sum: 1}
+            }
+          }
+      ],
+      characteristics: [
+        {$unwind: '$reviews.characteristics'},
+        {$group:
+            {
+              _id: '$reviews.characteristics._id',
+              average: {$avg: '$reviews.characteristics.value'}
+            }
+          }
+      ],
+    }}
   ])
 }
 
@@ -121,4 +155,8 @@ module.exports = {
   getRecommendMeta,
   getCharMeta,
   getProduct,
+  getAllMeta,
 }
+
+
+

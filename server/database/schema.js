@@ -23,6 +23,13 @@ const photoSchema = new Schema({
 
 const Photo = mongoose.model('Photo', photoSchema)
 
+const charvalueSchema = new Schema({
+  _id: Number,
+  value: Number,
+})
+
+const Charvalue = mongoose.model('Charvalue', charvalueSchema)
+
 const reviewSchema = new Schema({
   rating: Number,
   summary: String,
@@ -31,6 +38,7 @@ const reviewSchema = new Schema({
   name: String,
   email: String,
   photos: [photoSchema],
+  characteristics: [],
   helpfulness: Number,
   report: Boolean,
 })
@@ -38,19 +46,13 @@ const reviewSchema = new Schema({
 const Review = mongoose.model('Review', reviewSchema)
 
 const characteristicSchema = new Schema({
-  _id: String,
+  _id: Number,
   name: String,
 })
 
 const Characteristic = mongoose.model('Characteristic', characteristicSchema)
 
-const charvalueSchema = new Schema({
-  prod_id: Number,
-  char_id: String,
-  value: Number,
-})
 
-const Charvalue = mongoose.model('Charvalue', charvalueSchema)
 
 const productSchema = new Schema({
   _id: Number,

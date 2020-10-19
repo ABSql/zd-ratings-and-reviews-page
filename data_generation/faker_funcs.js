@@ -1,11 +1,12 @@
 const faker = require('faker')
+const ids = require('mongoose')
 const fs = require('fs')
 
-const createProduct = (id) => {
+const createProduct = (id, charIds) => {
   const inputArray = []
-  for (let i = 0; i < faker.random.number({'min': 1, 'max': 5}); i++) {
+  for (let i = 0; i < charIds.length; i++) {
     let char = {
-      _id: faker.random.uuid(),
+      _id: charIds[i],
       name: faker.commerce.productAdjective()
     }
     inputArray.push(char)
@@ -18,7 +19,8 @@ const createProduct = (id) => {
   return prod
 }
 
-const createReview = () => {
+const createReview = (charIds) => {
+  const _id = {$oid: ids.Types.ObjectId()}
   const rating = faker.random.number({'min': 1, 'max': 5})
   const summary = faker.lorem.sentence()
   const body = faker.lorem.sentences(2, '. ')
@@ -27,12 +29,25 @@ const createReview = () => {
   const email = faker.internet.email()
   const photos = []
   for (let i = 0; i < faker.random.number(3); i++){
-    photos.push(faker.internet.domainName())
+    let photoEntry = {
+      _id: {$oid: ids.Types.ObjectId()},
+      url: faker.image.imageUrl()
+    }
+    photos.push(photoEntry)
+  }
+  const characteristics = []
+  for (let i = 0; i < charIds.length; i++) {
+    let char = {
+      _id: charIds[i],
+      value: faker.random.number({'min': 1, 'max': 5})
+    }
+    characteristics.push(char)
   }
   const helpfulness = 0
   const report = false
 
   const output = {
+    _id,
     rating,
     summary,
     body,
@@ -40,75 +55,25 @@ const createReview = () => {
     name,
     email,
     photos,
+    characteristics,
     helpfulness,
     report,
   }
   return output
 }
 
-const createCharEntry = (prodId, char) => {
-  const characteristic = {
-    prod_id: prodId,
-    char_id: char._id,
-    value: faker.random.number({'min': 1, 'max': 5}),
-  }
-  return characteristic
-}
-
 // create product and populate with random num of reviews
-const createProductEntry = (id, numReviews) => {
-  const newProduct = createProduct(id)
+const createProductEntry = (id, numReviews, charIds) => {
+  const newProduct = createProduct(id, charIds)
   for (let i = 0; i < numReviews; i++) {
-    newProduct.reviews.push(createReview())
+    newProduct.reviews.push(createReview(charIds))
   }
   return newProduct
 }
 
 module.exports = {
   createProductEntry,
-  createCharEntry,
   createReview,
   createProduct
 }
-
-// const writeReviews = fs.createWriteStream('./data_generation/reviews.csv');
-// writeReviews.write('fake reviews\n', 'utf8');
-
-// const writeChars = fs.createWriteStream('./data_generation/chars.csv');
-// writeChars.write('fake chars\n', 'utf8');
-
-// const generateReviews = (writer1, writer2, number, encoding, cb) => {
-//   let i = number
-//   let id = 0
-//   function write() {
-//     let ok = true;
-//     do {
-//       let numReviews = faker.random.number({'min': 0, 'max': 100})
-//       let prodEntry = createProductEntry(id, numReviews)
-//       let prodChars = prodEntry.characteristics
-//       i -= numReviews;
-//       id += 1;
-//       if (i === 0) {
-//         writer1.write(prodEntry, encoding, callback);
-//         writer2.write(prodEntry, encoding, callback);
-//       } else {
-// // see if we should continue, or wait
-// // don't pass the callback, because we're not done yet.
-//         ok = writer1.write(prodEntry, encoding);
-//         ok = writer2.write(prodEntry, encoding);
-//       }
-//     } while (i > 0 && ok);
-//     if (i > 0) {
-// // had to stop early!
-// // write some more once it drains
-//       writer1.once('drain', write);
-//       writer2.once('drain', write);
-//     }
-//   }
-// write()
-// }
-
-// generateReviews(writeReviews, writeChars, 1000, 'utf-8', () => {
-//   writeReviews.end()
-// })
 
