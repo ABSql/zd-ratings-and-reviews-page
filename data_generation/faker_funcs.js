@@ -20,7 +20,7 @@ const createProduct = (id, charIds) => {
 }
 
 const createReview = (charIds) => {
-  const _id = ids.Types.ObjectId()
+  const _id = {$oid: ids.Types.ObjectId()}
   const rating = faker.random.number({'min': 1, 'max': 5})
   const summary = faker.lorem.sentence()
   const body = faker.lorem.sentences(2, '. ')
@@ -30,7 +30,7 @@ const createReview = (charIds) => {
   const photos = []
   for (let i = 0; i < faker.random.number(3); i++){
     let photoEntry = {
-      // _id: ids.Types.ObjectId(),
+      _id: {$oid: ids.Types.ObjectId()},
       url: faker.image.imageUrl()
     }
     photos.push(photoEntry)
@@ -47,7 +47,7 @@ const createReview = (charIds) => {
   const report = false
 
   const output = {
-    // _id,
+    _id,
     rating,
     summary,
     body,

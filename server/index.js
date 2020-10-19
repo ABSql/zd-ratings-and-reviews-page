@@ -58,7 +58,7 @@ app.post('/reviews/:product_id', async (req, res) => {
 app.put('/reviews/helpful/:review_id', async (req, res) => {
   const reviewId = req.params.review_id
   try {
-    console.log(await reviews.markHelpful(reviewId))
+    await reviews.markHelpful(reviewId)
     res.sendStatus(201)
   } catch(err) {
     console.log(err)
@@ -69,7 +69,7 @@ app.put('/reviews/helpful/:review_id', async (req, res) => {
 app.put('/reviews/report/:review_id', async (req, res) => {
   const reportedReview = req.params.review_id
   try {
-    console.log( await reviews.reportReview(reportedReview) )
+    await reviews.reportReview(reportedReview)
     res.sendStatus(201)
   } catch(err) {
     console.log(err)

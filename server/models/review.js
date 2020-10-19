@@ -29,47 +29,46 @@ const createReview = async (productId, data) => {
 /**** if product hasnt beene edited it will have string as _id, if it has been edited
  * it will have objectid as _id, either handle that here or fix in data generation
  */
-const markHelpful = async (id) => {
-  const prod1 = await product.Product.aggregate([
-    {$match: {'reviews._id': mongoose.Types.ObjectId(id)}},
-    // {$unwind: '$reviews'},
-    // {$match: {'reviews._id': id}},
-    // {$set: {'reviews.helfulness': 1}}
-  ])
-  // have prod id can now replace at review id
-  let newprod = prod1[0]
-  for (let i = 0; i < newprod.reviews.length; i++) {
-    let string1 = newprod.reviews[i]._id.toString()
-    if (string1 === id) {
-      newprod.reviews[i].helpfulness += 1
-      break
-    }
-  }
-  product.Product.findByIdAndUpdate(newprod._id, newprod, (err, prod) => {
-    if (err) throw err
-    // console.log(prod)
-    prod.save()
+// const markHelpful = async (id) => {
+//   const objId = mongoose.Types.ObjectId(id)
+//   const prod = await product.Product.aggregate([
+//     {$match: {'reviews._id': objId}},
+//   ])
+//   // have prod id can now replace at review id
+//   console.log(prod)
+//   let newprod = prod[0]
+//   for (let i = 0; i < newprod.reviews.length; i++) {
+//     let string = newprod.reviews[i]._id.toString()
+//     // console.log(string1)
+//     if (string === id) {
+//       newprod.reviews[i].helpfulness += 1
+//       console.log('here')
+//       break
+//     }
+//   }
+//   product.Product.findByIdAndUpdate(newprod._id, newprod, (err, prod) => {
+//     if (err) throw err
+//     prod.save()
+//   })
+// }
+
+const markHelpful = (id) => {
+  // find product containing review with input id
+  const reviewId = mongoose.Types.ObjectId(id)
+  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
+    // select review with input id and increment helpfullness by 1
+    prod.reviews.id(reviewId).helpfulness += 1
+    prod.save((err) => {
+      if (err) throw err
+    })
   })
 }
 
-// const markHelpful = (id) => {
-//   // find product containing review with input id
-
-//   return product.Product.find({'reviews._id': `${id}`}, (err, prod) => {
-//     // select review with input id and increment helpfullness by 1
-//     console.log(prod)
-//     prod.reviews.id(id).helpfulness += 1
-//     prod.save((err) => {
-//       if (err) throw err
-//     })
-//   })
-
-// }
-
 const reportReview = (id) => {
-  return product.Product.findOne({'reviews._id': id}, (err, prod) => {
+  const reviewId = mongoose.Types.ObjectId(id)
+  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
     // select review with input id and change report from false to true
-    prod.reviews.id(id).report = true
+    prod.reviews.id(reviewId).report = true
     prod.save((err) => {
       if (err) throw err
     })
