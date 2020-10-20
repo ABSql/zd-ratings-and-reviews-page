@@ -1,0 +1,57 @@
+config:
+  target: "http://localhost:9003"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: Warm up
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 75
+      name: Ramp up load
+    - duration: 600
+      arrivalRate: 75
+      name: Sustained load
+  processor: './artillery_review.js'
+
+scenarios:
+  - name: 'Navigate to two products'
+    flow:
+      - get:
+          url: '/'
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/list'
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+      - think: {{$randomNumber(1,10)}}
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/list?sort=helpful'
+      - think: {{$randomNumber(10,20)}}
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/list'
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+
+  - name: 'Get product and write review'
+    flow:
+      - function: 'createReview'
+      - get:
+          url: '/'
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/list'
+      - get:
+          url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+      - think: {{$randomNumber(30,60)}}
+      - post:
+          url: '/reviews/{{$randomNumber(1,19000)}}'
+          json:
+            rating: '{{ rating }}'
+            summary: '{{ summary }}'
+            body: '{{ body }}'
+            recommend: '{{ recommend }}'
+            name: '{{ name }}'
+            email: '{{ email }}'
+            photos: '{{ photos }}'
+            characteristics: '{{ characteristics }}'
+
+
+

@@ -13,7 +13,7 @@
     "test": "jest",
     "build": "webpack -p --mode=production",
     "start": "cd server && nodemon index.js",
-    "start:server": "nodemon server/index.js -w server -w"
+    "start:server": "node server/index.js"
   },
   "repository": {
     "type": "git",

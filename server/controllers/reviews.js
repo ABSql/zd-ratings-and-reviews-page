@@ -57,9 +57,12 @@ const getReviewsMeta = async (id) => {
   // charavg _id corresponds to a key in the productChars array
   const charMeta = {}
   charavg.forEach((value) => {
-    charMeta[productChars[value._id].name] = {
-      id: value._id,
-      value: value.average
+    // aggregate query returns null for empty characteristic arrays
+    if (value._id !== null) {
+      charMeta[productChars[value._id].name] = {
+        id: value._id,
+        value: value.average
+      }
     }
   })
 
