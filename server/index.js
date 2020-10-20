@@ -1,16 +1,7 @@
 const express = require('express');
+const compression = require('compression');
 const bodyParser = require('body-parser');
 const reviews = require('./controllers/reviews.js')
-
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/sdc', {useNewUrlParser: true});
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', async function() {
-  console.log('database connected')
-});
-
 
 const app = express();
 const PORT = 9003;
@@ -18,7 +9,16 @@ const PORT = 9003;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// app.use(compression())
 app.use(express.static('../client/dist'));
+
+app.get('/hello', (req, res) => {
+  res.status(200).send('hellowworld')
+})
+
+app.get('/', (req, res) => {
+  res.sendStatus(200)
+})
 
 // Requests here
 app.get('/reviews/:product_id/list', async (req, res) => {
@@ -59,7 +59,7 @@ app.put('/reviews/helpful/:review_id', async (req, res) => {
   const reviewId = req.params.review_id
   try {
     await reviews.markHelpful(reviewId)
-    res.sendStatus(201)
+    res.sendStatus(200)
   } catch(err) {
     console.log(err)
     res.sendStatus(500)
@@ -70,7 +70,7 @@ app.put('/reviews/report/:review_id', async (req, res) => {
   const reportedReview = req.params.review_id
   try {
     await reviews.reportReview(reportedReview)
-    res.sendStatus(201)
+    res.sendStatus(200)
   } catch(err) {
     console.log(err)
     res.sendStatus(500)
@@ -85,4 +85,5 @@ app.delete('/reviews/:review_id', (req, res) => {
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Hello, Scrumdog.  Your server is running on PORT: ${PORT}`);
+  console.log('Node Env is: ', process.env.NODE_ENV)
 });

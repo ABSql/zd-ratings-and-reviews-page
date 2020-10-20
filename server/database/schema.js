@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 mongoose.set('useFindAndModify', false);
 
-const db = mongoose.connection;
-
 const sequenceSchema = new Schema({
   _id: String,
   sequence_value: Number,
@@ -64,6 +62,7 @@ const Product = mongoose.model('Product', productSchema)
 
 module.exports = {
   Product,
+  productSchema
   Review,
   Photo,
   Characteristic,

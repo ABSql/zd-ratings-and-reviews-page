@@ -1,7 +1,19 @@
 const product = require('../database/schema.js')
-var MongoClient = require('mongodb').MongoClient;
 const mongoose = require('mongoose')
-var url = "mongodb://localhost:27017/";
+
+const dbconnect1 = mongoose.connect("mongodb://localhost:27017/sdc", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  poolSize: 100,
+})
+
+dbconnect1.connection.on("error", err => {
+  console.log("err", err)
+})
+dbconnect1.connection.on("connected", (err, res) => {
+  console.log("mongoose is connected")
+})
+
 
 const createReview = async (productId, data) => {
 
@@ -53,8 +65,6 @@ const reportReview = (id) => {
 const getReviewsList = async (id, count, page, sort) => {
   return product.Product.aggregate([
     {$match: {_id: parseInt(id)}},
-    // {$sort : {'reviews.helpfulness': 1}},
-    // {$sort: {'reviews.report': 1}}
     {$project: {
       reviews: {$filter:
           {
