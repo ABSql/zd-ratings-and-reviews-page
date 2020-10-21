@@ -31,7 +31,6 @@ const getReviewsMeta = async (id) => {
   try{
     // get reviews meta data
     let meta = await reviews.getAllMeta(id)
-
     const ratingInfo = meta[0].reviews
     ratingMeta ={}
     ratingInfo.forEach((value) => {

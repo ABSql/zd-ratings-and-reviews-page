@@ -2,6 +2,7 @@ const faker = require('faker')
 const ids = require('mongoose')
 
 const createReview = (context, events, done) => {
+  const _id = {$oid: ids.Types.ObjectId()}
   const rating = faker.random.number({'min': 1, 'max': 5})
   const summary = faker.lorem.sentence()
   const body = faker.lorem.sentences(2, '. ')
@@ -20,6 +21,7 @@ const createReview = (context, events, done) => {
   const helpfulness = 0
   const report = false
 // add variables to context for artillery to access
+    context.vars._id = _id
     context.vars.rating = rating
     context.vars.summary = summary
     context.vars.body = body

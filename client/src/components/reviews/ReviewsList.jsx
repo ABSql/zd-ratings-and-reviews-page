@@ -10,7 +10,7 @@ const ReviewsList = ({ reviewsOnPage, reviewData, input }) => {
     return (
       <Grid>
         {filteredReviewData.map((review) => (
-          <ReviewEntry key={review.review_id} review={review} input={input} />
+          <ReviewEntry key={review._id} review={review} input={input} />
         ))}
       </Grid>
     );

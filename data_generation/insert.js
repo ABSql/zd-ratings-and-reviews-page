@@ -62,8 +62,8 @@ db.products.explain('executionStats').aggregate([
   },
 ])
 
-db.products.explain('executionStats').aggregate([
-    {$match: {_id: {$gt: 100000, $lt: 100010}}},
+db.collection('products').aggregate([
+    {$match: {_id: 150000}},
     {$unwind: '$reviews'},
     {$facet: {
       reviews: [

@@ -2,7 +2,7 @@ const faker = require('faker')
 const fs = require('fs')
 const fakerFuncs = require('./faker_funcs.js')
 
-const writeReviews = fs.createWriteStream('./1M_Reviews.csv');
+const writeReviews = fs.createWriteStream('./10M_Reviews.csv');
 const testReviews = fs.createWriteStream('./1Mtest_reviews.csv')
 
 const generateXReviews = (writer, tester, number, encoding, cb) => {
@@ -47,7 +47,7 @@ const generateXReviews = (writer, tester, number, encoding, cb) => {
 write()
 }
 
-generateXReviews(writeReviews, testReviews, 1000000, 'utf-8', () => {
+generateXReviews(writeReviews, testReviews, 10000000, 'utf-8', () => {
   writeReviews.end()
   testReviews.end()
 })

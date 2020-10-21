@@ -59,7 +59,7 @@ const ReviewEntry = ({ review, input }) => {
 
     const onHelpfulButtonClick = () => {
       setHelpfulness(helpfulness + 1);
-      markReviewAsHelpful(review.review_id);
+      markReviewAsHelpful(review._id);
     };
 
     const onShowMoreClick = () => {
@@ -85,7 +85,7 @@ const ReviewEntry = ({ review, input }) => {
           </Grid>
           <Grid item xs={6} lg={4}>
             <Typography variant="caption">
-              {review.reviewer_name}
+              {review.name}
               {' '}
               {date}
             </Typography>
