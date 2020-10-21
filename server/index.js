@@ -57,18 +57,26 @@ app.post('/reviews/:product_id', async (req, res) => {
 
 app.put('/reviews/helpful/:review_id', async (req, res) => {
   const reviewId = req.params.review_id
-  try {
-    await reviews.markHelpful(reviewId)
+  if (req.params.review_id === 'undefined') {
     res.sendStatus(200)
-  } catch(err) {
-    console.log(err)
-    res.sendStatus(500)
+  } else {
+      try {
+        await reviews.markHelpful(reviewId)
+        res.sendStatus(200)
+      } catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+      }
   }
 })
 
 app.put('/reviews/report/:review_id', async (req, res) => {
   const reportedReview = req.params.review_id
   try {
+    if (reportedReview === 'undefined') {
+      res.sendStatus(200)
+      return
+    }
     await reviews.reportReview(reportedReview)
     res.sendStatus(200)
   } catch(err) {

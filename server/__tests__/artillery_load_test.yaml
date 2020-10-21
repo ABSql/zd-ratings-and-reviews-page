@@ -1,17 +1,17 @@
 config:
   target: "http://localhost:9003"
-  http:
-    pool: 5000
+  # http:
+  #   pool: 5000
   phases:
     - duration: 5
       arrivalRate: 5
       name: Warm up
     - duration: 30
       arrivalRate: 5
-      rampTo: 50
+      rampTo: 200
       name: Ramp up load
-    - duration: 30
-      arrivalRate: 50
+    - duration: 300
+      arrivalRate: 200
       name: Sustained load
   processor: './artillery_review.js'
 
@@ -22,11 +22,11 @@ scenarios:
           url: '/'
       - loop:
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/list'
+            url: '/reviews/{{$randomNumber(1,180000)}}/list'
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/list?sort=helpful'
+            url: '/reviews/{{$randomNumber(1,180000)}}/list?sort=helpful'
         count: 50
 
   - name: 'mark helpful and report reviews'
@@ -35,12 +35,12 @@ scenarios:
           url: '/'
       - loop:
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/list'
+            url: '/reviews/{{$randomNumber(1,180000)}}/list'
             capture:
               json: "$.results[0]._id"
               as: "review_id"
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
         - put:
             url: '/reviews/helpful/{{review_id}}'
         - put:
@@ -54,11 +54,11 @@ scenarios:
           url: '/'
       - loop:
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/list'
+            url: '/reviews/{{$randomNumber(1,180000)}}/list'
         - get:
-            url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
         - post:
-            url: '/reviews/{{$randomNumber(1,19000)}}'
+            url: '/reviews/{{$randomNumber(1,180000)}}'
             json:
               rating: '{{ rating }}'
               summary: '{{ summary }}'
@@ -68,7 +68,7 @@ scenarios:
               email: '{{ email }}'
               photos: '{{ photos }}'
               characteristics: '{{ characteristics }}'
-        count: 10
+        count: 20
 
 
 

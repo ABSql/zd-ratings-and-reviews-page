@@ -2,3 +2,4 @@ node_modules
 package-lock.json
 data_generation/1M_reviews.csv
 data_generation/10M_reviews.csv
+server/.clinic

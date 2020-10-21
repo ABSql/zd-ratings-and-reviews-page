@@ -62,7 +62,7 @@ const Product = mongoose.model('Product', productSchema)
 
 module.exports = {
   Product,
-  productSchema
+  productSchema,
   Review,
   Photo,
   Characteristic,

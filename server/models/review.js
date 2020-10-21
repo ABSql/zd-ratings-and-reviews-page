@@ -1,17 +1,10 @@
 const product = require('../database/schema.js')
 const mongoose = require('mongoose')
 
-const dbconnect1 = mongoose.connect("mongodb://localhost:27017/sdc", {
+mongoose.connect("mongodb://localhost:27017/sdc", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   poolSize: 100,
-})
-
-dbconnect1.connection.on("error", err => {
-  console.log("err", err)
-})
-dbconnect1.connection.on("connected", (err, res) => {
-  console.log("mongoose is connected")
 })
 
 
