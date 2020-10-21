@@ -2,8 +2,8 @@ const faker = require('faker')
 const fs = require('fs')
 const fakerFuncs = require('./faker_funcs.js')
 
-const writeReviews = fs.createWriteStream('./11M_Reviews.csv');
-const testReviews = fs.createWriteStream('./11Mtest_reviews.csv')
+const writeReviews = fs.createWriteStream('./1M_Reviews.csv');
+const testReviews = fs.createWriteStream('./1Mtest_reviews.csv')
 
 const generateXReviews = (writer, tester, number, encoding, cb) => {
   let i = number
@@ -12,8 +12,8 @@ const generateXReviews = (writer, tester, number, encoding, cb) => {
   function write() {
     let ok = true;
     do {
-      let numReviews = faker.random.number({'min': 0, 'max': 100})
-      let prodChars = faker.random.number({'min': 1, 'max': 5})
+      let numReviews = faker.random.number({'min': 1, 'max': 10})
+      let prodChars = faker.random.number({'min': 1, 'max': 4})
       let charIds = []
       // create array of characteristic ids to pass to product/reviews
       for (let i = 0; i < prodChars; i++) {
@@ -47,7 +47,7 @@ const generateXReviews = (writer, tester, number, encoding, cb) => {
 write()
 }
 
-generateXReviews(writeReviews, testReviews, 100000, 'utf-8', () => {
+generateXReviews(writeReviews, testReviews, 1000000, 'utf-8', () => {
   writeReviews.end()
   testReviews.end()
 })

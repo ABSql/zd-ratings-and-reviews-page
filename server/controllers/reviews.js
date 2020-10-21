@@ -28,51 +28,55 @@ const getReviewsList = async (id, count, page, sort) => {
 }
 
 const getReviewsMeta = async (id) => {
-  // get reviews meta data
-  let meta = await reviews.getAllMeta(id)
+  try{
+    // get reviews meta data
+    let meta = await reviews.getAllMeta(id)
 
-  const ratingInfo = meta[0].reviews
-  ratingMeta ={}
-  ratingInfo.forEach((value) => {
-    ratingMeta[value._id] = value.count
-  })
+    const ratingInfo = meta[0].reviews
+    ratingMeta ={}
+    ratingInfo.forEach((value) => {
+      ratingMeta[value._id] = value.count
+    })
 
-  const recommended = meta[0].recommend
-  recommendMeta ={}
-  recommended.forEach((value) => {
-    recommendMeta[value._id] = value.count
-  })
+    const recommended = meta[0].recommend
+    recommendMeta ={}
+    recommended.forEach((value) => {
+      recommendMeta[value._id] = value.count
+    })
 
-  const charavg = meta[0].characteristics
-  const prodInfo = await reviews.getProduct(id)
-  const productChars= {}
-  // create obj of the characteristic names and _id's
-  // char names are only stored in the parent product chars array
-  prodInfo.characteristics.forEach((value) => {
-    productChars[value._id] = {
-      name: value.name
-    }
-  })
-  // format characteristics meta data
-  // charavg _id corresponds to a key in the productChars array
-  const charMeta = {}
-  charavg.forEach((value) => {
-    // aggregate query returns null for empty characteristic arrays
-    if (value._id !== null) {
-      charMeta[productChars[value._id].name] = {
-        id: value._id,
-        value: value.average
+    const charavg = meta[0].characteristics
+    const prodInfo = await reviews.getProduct(id)
+    const productChars= {}
+    // create obj of the characteristic names and _id's
+    // char names are only stored in the parent product chars array
+    prodInfo.characteristics.forEach((value) => {
+      productChars[value._id] = {
+        name: value.name
       }
-    }
-  })
+    })
+    // format characteristics meta data
+    // charavg _id corresponds to a key in the productChars array
+    const charMeta = {}
+    charavg.forEach((value) => {
+      // aggregate query returns null for empty characteristic arrays
+      if (value._id !== null) {
+        charMeta[productChars[value._id].name] = {
+          id: value._id,
+          value: value.average
+        }
+      }
+    })
 
-  const output = {
-    product_id: id,
-    ratings: ratingMeta,
-    recommended: recommendMeta,
-    characteristics: charMeta,
+    const output = {
+      product_id: id,
+      ratings: ratingMeta,
+      recommended: recommendMeta,
+      characteristics: charMeta,
+    }
+    return output
+  } catch (err) {
+    throw err
   }
-  return output
 }
 
 const addReview = (id, data) => {

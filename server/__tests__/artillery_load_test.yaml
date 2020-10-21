@@ -1,15 +1,17 @@
 config:
   target: "http://localhost:9003"
+  # http:
+  #   pool: 5000
   phases:
-    - duration: 60
+    - duration: 5
       arrivalRate: 5
       name: Warm up
-    - duration: 120
+    - duration: 30
       arrivalRate: 5
-      rampTo: 75
+      rampTo: 200
       name: Ramp up load
-    - duration: 600
-      arrivalRate: 75
+    - duration: 300
+      arrivalRate: 200
       name: Sustained load
   processor: './artillery_review.js'
 
@@ -18,40 +20,55 @@ scenarios:
     flow:
       - get:
           url: '/'
+      - loop:
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/list'
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/list?sort=helpful'
+        count: 50
+
+  - name: 'mark helpful and report reviews'
+    flow:
       - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/list'
-      - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/meta'
-      - think: {{$randomNumber(1,10)}}
-      - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/list?sort=helpful'
-      - think: {{$randomNumber(10,20)}}
-      - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/list'
-      - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/meta'
+          url: '/'
+      - loop:
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/list'
+            capture:
+              json: "$.results[0]._id"
+              as: "review_id"
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
+        - put:
+            url: '/reviews/helpful/{{review_id}}'
+        - put:
+            url: '/reviews/report/{{review_id}}'
+        count: 50
 
   - name: 'Get product and write review'
     flow:
       - function: 'createReview'
       - get:
           url: '/'
-      - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/list'
-      - get:
-          url: '/reviews/{{$randomNumber(1,19000)}}/meta'
-      - think: {{$randomNumber(30,60)}}
-      - post:
-          url: '/reviews/{{$randomNumber(1,19000)}}'
-          json:
-            rating: '{{ rating }}'
-            summary: '{{ summary }}'
-            body: '{{ body }}'
-            recommend: '{{ recommend }}'
-            name: '{{ name }}'
-            email: '{{ email }}'
-            photos: '{{ photos }}'
-            characteristics: '{{ characteristics }}'
+      - loop:
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/list'
+        - get:
+            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
+        - post:
+            url: '/reviews/{{$randomNumber(1,180000)}}'
+            json:
+              rating: '{{ rating }}'
+              summary: '{{ summary }}'
+              body: '{{ body }}'
+              recommend: '{{ recommend }}'
+              name: '{{ name }}'
+              email: '{{ email }}'
+              photos: '{{ photos }}'
+              characteristics: '{{ characteristics }}'
+        count: 20
 
 
 
