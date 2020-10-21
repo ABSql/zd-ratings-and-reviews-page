@@ -1,3 +1,4 @@
+const newrelic = require('newrelic');
 const express = require('express');
 const compression = require('compression');
 const bodyParser = require('body-parser');
@@ -9,7 +10,7 @@ const PORT = 9003;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use(compression())
+app.use(compression())
 app.use(express.static('../client/dist'));
 
 app.get('/hello', (req, res) => {

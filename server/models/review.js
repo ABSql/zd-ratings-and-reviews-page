@@ -28,31 +28,19 @@ const createReview = async (productId, data) => {
     reviewData.photos.push({url: url})
   })}
 
-  return product.Product.update({_id: productId}, {$push: {reviews: reviewData}})
+  return product.Product.updateOne({_id: productId}, {$push: {reviews: reviewData}})
 }
-
 
 const markHelpful = (id) => {
   // find product containing review with input id
   const reviewId = mongoose.Types.ObjectId(id)
-  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
-    // select review with input id and increment helpfullness by 1
-    prod.reviews.id(reviewId).helpfulness += 1
-    prod.save((err) => {
-      if (err) throw err
-    })
-  })
+  return product.Product.updateOne({'reviews._id': reviewId}, {$inc:{'reviews.$[outer].helpfulness': 1}}, {'arrayFilters': [{'outer._id': reviewId}]})
 }
 
 const reportReview = (id) => {
+  // find product containing review with input id
   const reviewId = mongoose.Types.ObjectId(id)
-  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
-    // select review with input id and change report from false to true
-    prod.reviews.id(reviewId).report = true
-    prod.save((err) => {
-      if (err) throw err
-    })
-  })
+  return product.Product.updateOne({'reviews._id': reviewId}, {$set:{'reviews.$[outer].report': true}}, {'arrayFilters': [{'outer._id': reviewId}]})
 }
 
 const getReviewsList = async (id, count, page, sort) => {
