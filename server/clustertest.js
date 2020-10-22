@@ -1,4 +1,5 @@
 const express = require('express');
+const newrelic = require('newrelic');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const reviews = require('./controllers/reviews.js')
@@ -37,7 +38,7 @@ if (clusterWorkerSize > 1) {
       const sort = req.query.sort ? req.query.sort : 'newest'
       try {
         const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)
-        res.status(200).send(reviewList)
+        res.status(200).send(reviewList[0])
       } catch(err) {
         console.log(err)
         res.sendStatus(500)
@@ -73,7 +74,7 @@ if (clusterWorkerSize > 1) {
       }
       try {
         await reviews.markHelpful(reviewId)
-        res.sendStatus(200)
+        res.sendStatus(202)
       } catch(err) {
         console.log(err)
         res.sendStatus(500)
@@ -88,7 +89,7 @@ if (clusterWorkerSize > 1) {
       }
       try {
         await reviews.reportReview(reportedReview)
-        res.sendStatus(200)
+        res.sendStatus(202)
       } catch(err) {
         console.log(err)
         res.sendStatus(500)

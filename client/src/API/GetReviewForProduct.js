@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const getReviewForProduct = (id) => axios(`http://52.26.193.201:3000/reviews/${id}/list?count=20`)
+const getReviewForProduct = (id) => axios(`http://localhost:9003/reviews/${id}/list?count=20`)
   .then((res) => (res.data))
   .catch((err) => { throw err; });
 

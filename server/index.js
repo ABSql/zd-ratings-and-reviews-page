@@ -1,3 +1,4 @@
+// const newrelic = require('newrelic');
 const express = require('express');
 const compression = require('compression');
 const bodyParser = require('body-parser');
@@ -26,7 +27,7 @@ app.get('/reviews/:product_id/list', async (req, res) => {
   const page = req.query.page ? parseInt(req.query.page) : 1
   const sort = req.query.sort ? req.query.sort : 'newest'
   try {
-    const reviewList = await reviews.getReviewsList(req.params.product_id, count, page, sort)
+    const reviewList = await reviews.getReviewsListTest(req.params.product_id, count, page, sort)
     res.status(200).send(reviewList)
   } catch(err) {
     console.log(err)
@@ -36,7 +37,7 @@ app.get('/reviews/:product_id/list', async (req, res) => {
 
 app.get('/reviews/:product_id/meta', async (req, res) => {
   try {
-    const meta = await reviews.getReviewsMeta(req.params.product_id)
+    const meta = await reviews.getReviewsMetaTest(req.params.product_id)
     res.status(200).send(meta)
   } catch(err) {
     console.log(err)

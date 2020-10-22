@@ -1,11 +1,23 @@
 const product = require('../database/schema.js')
 const mongoose = require('mongoose')
+const MongoClient = require('mongodb').MongoClient
 
 mongoose.connect("mongodb://localhost:27017/sdc", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   poolSize: 100,
 })
+
+let db
+let collection
+MongoClient.connect("mongodb://localhost:27017/sdc", { useNewUrlParser: true, poolSize: 10 })
+.then(client => {
+  db = client.db('sdc');
+  collection = db.collection('products');
+  console.log('mongoclient connected')
+})
+.catch(error => console.error(error));
+
 
 
 const createReview = async (productId, data) => {
@@ -28,31 +40,19 @@ const createReview = async (productId, data) => {
     reviewData.photos.push({url: url})
   })}
 
-  return product.Product.update({_id: productId}, {$push: {reviews: reviewData}})
+  return product.Product.updateOne({_id: productId}, {$push: {reviews: reviewData}})
 }
-
 
 const markHelpful = (id) => {
   // find product containing review with input id
   const reviewId = mongoose.Types.ObjectId(id)
-  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
-    // select review with input id and increment helpfullness by 1
-    prod.reviews.id(reviewId).helpfulness += 1
-    prod.save((err) => {
-      if (err) throw err
-    })
-  })
+  return product.Product.updateOne({'reviews._id': reviewId}, {$inc:{'reviews.$[outer].helpfulness': 1}}, {'arrayFilters': [{'outer._id': reviewId}]})
 }
 
 const reportReview = (id) => {
+  // find product containing review with input id
   const reviewId = mongoose.Types.ObjectId(id)
-  return product.Product.findOne({'reviews._id': reviewId}, (err, prod) => {
-    // select review with input id and change report from false to true
-    prod.reviews.id(reviewId).report = true
-    prod.save((err) => {
-      if (err) throw err
-    })
-  })
+  return product.Product.updateOne({'reviews._id': reviewId}, {$set:{'reviews.$[outer].report': true}}, {'arrayFilters': [{'outer._id': reviewId}]})
 }
 
 const getReviewsList = async (id, count, page, sort) => {
@@ -69,6 +69,10 @@ const getReviewsList = async (id, count, page, sort) => {
       }
     },
   ])
+}
+
+const getReviewsListTest = (id) => {
+  return product.Product.findOne({_id: id}).lean()
 }
 
 const getReviewsMeta = (id) => {
@@ -109,6 +113,10 @@ const getCharMeta = (id) => {
         }
       },
   ])
+}
+
+const getAllMetaTest = (id) => {
+  return product.Product.findOne({_id: id}).lean()
 }
 
 const getAllMeta = (id) => {
@@ -159,6 +167,8 @@ module.exports = {
   getCharMeta,
   getProduct,
   getAllMeta,
+  getAllMetaTest,
+  getReviewsListTest,
 }
 
 

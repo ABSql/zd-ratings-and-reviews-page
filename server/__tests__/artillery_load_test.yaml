@@ -1,17 +1,17 @@
 config:
   target: "http://localhost:9003"
-  # http:
-  #   pool: 5000
+  http:
+    pool: 100
   phases:
-    - duration: 5
-      arrivalRate: 5
-      name: Warm up
     - duration: 30
       arrivalRate: 5
-      rampTo: 200
+      name: Warm up
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 500
       name: Ramp up load
     - duration: 300
-      arrivalRate: 200
+      arrivalRate: 500
       name: Sustained load
   processor: './artillery_review.js'
 
@@ -22,12 +22,12 @@ scenarios:
           url: '/'
       - loop:
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/list'
+            url: '/reviews/{{$randomNumber(1,1800000)}}/list'
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
+            url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/list?sort=helpful'
-        count: 50
+            url: '/reviews/{{$randomNumber(1,1800000)}}/list?sort=helpful'
+        count: 2
 
   - name: 'mark helpful and report reviews'
     flow:
@@ -35,17 +35,17 @@ scenarios:
           url: '/'
       - loop:
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/list'
+            url: '/reviews/{{$randomNumber(1,1800000)}}/list'
             capture:
               json: "$.results[0]._id"
               as: "review_id"
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
+            url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
         - put:
             url: '/reviews/helpful/{{review_id}}'
         - put:
             url: '/reviews/report/{{review_id}}'
-        count: 50
+        count: 2
 
   - name: 'Get product and write review'
     flow:
@@ -54,12 +54,13 @@ scenarios:
           url: '/'
       - loop:
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/list'
+            url: '/reviews/{{$randomNumber(1,1800000)}}/list'
         - get:
-            url: '/reviews/{{$randomNumber(1,180000)}}/meta'
+            url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
         - post:
-            url: '/reviews/{{$randomNumber(1,180000)}}'
+            url: '/reviews/{{$randomNumber(1,1800000)}}'
             json:
+              _id: '{{_id}}'
               rating: '{{ rating }}'
               summary: '{{ summary }}'
               body: '{{ body }}'
@@ -68,7 +69,7 @@ scenarios:
               email: '{{ email }}'
               photos: '{{ photos }}'
               characteristics: '{{ characteristics }}'
-        count: 20
+        count: 2
 
 
 
