@@ -71,6 +71,10 @@ const getReviewsList = async (id, count, page, sort) => {
   ])
 }
 
+const getReviewsListTest = (id) => {
+  return product.Product.findOne({_id: id}).lean()
+}
+
 const getReviewsMeta = (id) => {
   return product.Product.aggregate([
     {$match: {_id: parseInt(id)}},
@@ -109,6 +113,10 @@ const getCharMeta = (id) => {
         }
       },
   ])
+}
+
+const getAllMetaTest = (id) => {
+  return product.Product.findOne({_id: id}).lean()
 }
 
 const getAllMeta = (id) => {
@@ -159,6 +167,8 @@ module.exports = {
   getCharMeta,
   getProduct,
   getAllMeta,
+  getAllMetaTest,
+  getReviewsListTest,
 }
 
 

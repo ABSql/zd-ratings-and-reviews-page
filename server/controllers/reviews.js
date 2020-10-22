@@ -27,6 +27,34 @@ const getReviewsList = async (id, count, page, sort) => {
   }
 }
 
+const getReviewsListTest = async (id, count, page, sort) => {
+  try {
+    const list = await reviews.getReviewsListTest(id)
+    // filter reported reviews
+    let reviewList = list.reviews.filter(review => review.report === false)
+
+    if (sort === 'helpful') {
+      reviewList = reviewList.sort((a, b) => {
+        return b.helpfulness - a.helpfulness
+      })
+    }
+    // starting place for slice is determined by page size and count
+    // ex page = 1 and count = 2 should return the second total review
+    const startIndex = (page - 1) * count
+    const endIndex = (startIndex + count)
+    reviewList = reviewList.slice(startIndex, endIndex)
+    const output = {
+      product: id,
+      page: page,
+      count: count,
+      results: reviewList
+    }
+    return output
+  } catch (err) {
+    throw err
+  }
+}
+
 const getReviewsMeta = async (id) => {
   try{
     // get reviews meta data
@@ -78,6 +106,62 @@ const getReviewsMeta = async (id) => {
   }
 }
 
+const getReviewsMetaTest = async (prodId) => {
+  try{
+    // get reviews meta data
+    let meta = await reviews.getAllMetaTest(prodId)
+
+    const ratingMeta = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+    }
+    const recommendMeta = {
+      0: 0,
+      1: 0,
+    }
+    let charMeta = {}
+    // need to get char names and match them with id's since the reviews dont have char
+    // names attached
+    const charPlaceholder = {}
+    meta.characteristics.forEach((char) => {
+      charPlaceholder[char._id] = {name: char.name, total: 0, count: 0}
+    })
+    meta.reviews.forEach((review) => {
+      let rating = review.rating
+      let recommend = review.recommend
+      ratingMeta[rating] += 1
+      recommendMeta[recommend] += 1
+      if (review.characteristics[0]) {
+        review.characteristics.forEach((char) => {
+          let id = char._id
+          charPlaceholder[id].total += char.value
+          charPlaceholder[id].count += 1
+        })
+      }
+    })
+
+    for (id in charPlaceholder) {
+      charMeta[charPlaceholder[id].name] = {
+        id: id,
+        value: charPlaceholder[id].total / charPlaceholder[id].count,
+      }
+    }
+
+    const output = {
+      product_id: prodId,
+      ratings: ratingMeta,
+      recommended: recommendMeta,
+      characteristics: charMeta,
+    }
+    return output
+  } catch (err) {
+    throw err
+  }
+}
+
 const addReview = (id, data) => {
   return reviews.createReview(id, data)
 }
@@ -101,5 +185,7 @@ module.exports = {
   markHelpful,
   reportReview,
   removeReview,
+  getReviewsMetaTest,
+  getReviewsListTest,
 }
 

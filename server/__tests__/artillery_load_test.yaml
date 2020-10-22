@@ -1,17 +1,17 @@
 config:
   target: "http://localhost:9003"
-  # http:
-  #   pool: 5000
+  http:
+    pool: 100
   phases:
     - duration: 30
       arrivalRate: 5
       name: Warm up
     - duration: 60
       arrivalRate: 5
-      rampTo: 150
+      rampTo: 500
       name: Ramp up load
     - duration: 300
-      arrivalRate: 150
+      arrivalRate: 500
       name: Sustained load
   processor: './artillery_review.js'
 
@@ -27,7 +27,7 @@ scenarios:
             url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
         - get:
             url: '/reviews/{{$randomNumber(1,1800000)}}/list?sort=helpful'
-        count: 10
+        count: 2
 
   - name: 'mark helpful and report reviews'
     flow:
@@ -45,7 +45,7 @@ scenarios:
             url: '/reviews/helpful/{{review_id}}'
         - put:
             url: '/reviews/report/{{review_id}}'
-        count: 10
+        count: 2
 
   - name: 'Get product and write review'
     flow:
@@ -69,7 +69,7 @@ scenarios:
               email: '{{ email }}'
               photos: '{{ photos }}'
               characteristics: '{{ characteristics }}'
-        count: 5
+        count: 2
 
 
 
