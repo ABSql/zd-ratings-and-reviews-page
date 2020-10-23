@@ -3,11 +3,13 @@ const express = require('express');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const reviews = require('./controllers/reviews.js')
+const cors = require('cors')
 
 const app = express();
 const PORT = 9003;
 
 app.use(bodyParser.json());
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use(compression())
