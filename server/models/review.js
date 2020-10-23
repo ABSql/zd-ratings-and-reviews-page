@@ -8,18 +8,6 @@ mongoose.connect("mongodb://localhost:27017/sdc", {
   poolSize: 100,
 })
 
-let db
-let collection
-MongoClient.connect("mongodb://localhost:27017/sdc", { useNewUrlParser: true, poolSize: 10 })
-.then(client => {
-  db = client.db('sdc');
-  collection = db.collection('products');
-  console.log('mongoclient connected')
-})
-.catch(error => console.error(error));
-
-
-
 const createReview = async (productId, data) => {
 
   const reviewData = new product.Review({
