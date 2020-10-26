@@ -12,11 +12,11 @@ pool.on('error', (err, client) => {
 });
 (async () => {
   try {
-    const text = 'UPDATE reviews SET report = true WHERE id = $1'
-    const args = [2]
+    const text = 'SELECT * FROM reviews WHERE id = $1 LIMIT $2 OFFSET $3'
+    const args = [2, 1, 1]
     const client = await pool.connect()
     const res = await client.query(text, args)
-    console.log(res)
+    console.log(res.rows)
     client.release()
   } catch (err) {
     throw err
@@ -31,6 +31,7 @@ exports.markHelpful = async (id) => {
    const client = await pool.connect()
    const res = await client.query(text, args)
    client.release()
+   return res
  } catch (err) {
    throw err
    client.release()
@@ -44,6 +45,7 @@ exports.markReported = async (id) => {
     const client = await pool.connect()
     const res = await client.query(text, args)
     client.release()
+    return res
   } catch (err) {
     throw err
     client.release()
@@ -54,8 +56,18 @@ exports.getMeta = () => {
 
 }
 
-exports.getList = () => {
-
+exports.getList = async (id, count, offset, sort) => {
+  try {
+    const text = 'SELECT * FROM reviews WHERE id = $1 LIMIT $2 OFFSET $3'
+    const args = [id, count, offset]
+    const client = await pool.connect()
+    const res = await client.query(text, args)
+    client.release()
+    return res
+  } catch (err) {
+    throw err
+    client.release()
+  }
 }
 
 exports.postReview = () => {
