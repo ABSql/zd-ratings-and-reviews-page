@@ -1,17 +1,16 @@
 config:
-  target: "http://localhost:9003"
-  http:
-    pool: 100
+  target: "http://ec2-52-15-99-75.us-east-2.compute.amazonaws.com:3000"
+  # target: 'http://ec2-3-21-230-106.us-east-2.compute.amazonaws.com'
   phases:
     - duration: 30
       arrivalRate: 5
       name: Warm up
     - duration: 60
       arrivalRate: 5
-      rampTo: 500
+      rampTo: 50
       name: Ramp up load
     - duration: 300
-      arrivalRate: 500
+      arrivalRate: 50
       name: Sustained load
   processor: './artillery_review.js'
 
@@ -20,56 +19,56 @@ scenarios:
     flow:
       - get:
           url: '/'
-      - loop:
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/list'
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/list?sort=helpful'
-        count: 2
+      # - loop:
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/list'
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/list?sort=helpful'
+        # count: 1
 
   - name: 'mark helpful and report reviews'
     flow:
       - get:
           url: '/'
-      - loop:
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/list'
-            capture:
-              json: "$.results[0]._id"
-              as: "review_id"
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
-        - put:
-            url: '/reviews/helpful/{{review_id}}'
-        - put:
-            url: '/reviews/report/{{review_id}}'
-        count: 2
+      # - loop:
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/list'
+          capture:
+            json: "$.results[0]._id"
+            as: "review_id"
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
+      - put:
+          url: '/reviews/helpful/{{review_id}}'
+      - put:
+          url: '/reviews/report/{{review_id}}'
+        # count: 1
 
   - name: 'Get product and write review'
     flow:
       - function: 'createReview'
       - get:
           url: '/'
-      - loop:
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/list'
-        - get:
-            url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
-        - post:
-            url: '/reviews/{{$randomNumber(1,1800000)}}'
-            json:
-              _id: '{{_id}}'
-              rating: '{{ rating }}'
-              summary: '{{ summary }}'
-              body: '{{ body }}'
-              recommend: '{{ recommend }}'
-              name: '{{ name }}'
-              email: '{{ email }}'
-              photos: '{{ photos }}'
-              characteristics: '{{ characteristics }}'
-        count: 2
+      # - loop:
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/list'
+      - get:
+          url: '/reviews/{{$randomNumber(1,1800000)}}/meta'
+      - post:
+          url: '/reviews/{{$randomNumber(1,1800000)}}'
+          json:
+            _id: '{{_id}}'
+            rating: '{{ rating }}'
+            summary: '{{ summary }}'
+            body: '{{ body }}'
+            recommend: '{{ recommend }}'
+            name: '{{ name }}'
+            email: '{{ email }}'
+            photos: '{{ photos }}'
+            characteristics: '{{ characteristics }}'
+        # count: 1
 
 
 

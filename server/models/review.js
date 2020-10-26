@@ -2,11 +2,20 @@ const product = require('../database/schema.js')
 const mongoose = require('mongoose')
 const MongoClient = require('mongodb').MongoClient
 
-mongoose.connect("mongodb://localhost:27017/sdc", {
+mongoose.connect("mongodb://3.135.222.102:27017/sdc", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   poolSize: 100,
 })
+
+mongoose.connection.on('error', err => {
+  console.log(err);
+});
+
+mongoose.connection.on('connected', function(){
+  console.log("mongoose connected")
+}
+);
 
 const createReview = async (productId, data) => {
 
