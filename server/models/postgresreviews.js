@@ -13,7 +13,7 @@ pool.on('error', (err, client) => {
 (async () => {
   try {
     const client = await pool.connect()
-    const text = 'SELECT rating, COUNT (rating), recommend, COUNT (recommend) FROM reviews WHERE product_id = $1 GROUP BY rating, recommend'
+    const text = 'SELECT char_id, COUNT (value) FROM characteristics WHERE product_id = $1 GROUP BY char_id'
     const res = await client.query(text, [6])
     console.log(res.rows)
     client.release()
@@ -51,12 +51,17 @@ exports.markReported = async (id) => {
 
 exports.getMeta = async (id) => {
   try {
-    const text = 'SELECT rating, COUNT (rating), recommend, COUNT (recommend) FROM reviews WHERE product_id = $1 GROUP BY rating, recommend'
     const client = await pool.connect()
-    const res = await client.query(text, [id])
+    const recQuery = 'SELECT recommend, COUNT (recommend) FROM reviews WHERE product_id = $1 GROUP BY recommend'
+    const revQuery = 'SELECT rating, COUNT (rating) FROM reviews WHERE product_id = $1 GROUP BY rating'
+    const charQuery = 'SELECT rating, COUNT (rating) FROM reviews WHERE product_id = $1 GROUP BY rating'
+
+    const res = await client.query(text, [6])
+    const res2 = await client.query(text2, [6])
+    console.log(res.rows, res2.rows)
     client.release()
-    return res
   } catch (err) {
+    console.log(err)
     throw err
   }
 }
@@ -85,7 +90,7 @@ exports.postReview = async (id, review, photosArray, charsObj) => {
 
     const photos = `INSERT INTO photos (review_id, url) VALUES ($1, $2)`
     photosArray.forEach( async (url) => {
-      let params = [reivewId, url]
+      let params = [reviewId, url]
       await client.query(photos, params)
     })
     const characteristics = `INSERT INTO review_characteristics (review_id, char_id, value) VALUES ($1, $2, $3)`
